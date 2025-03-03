@@ -35,7 +35,7 @@ with `/session/([a-f0-9]+)/profile`
 a request it will be automatically replaced with `<svg/onload=alert(26695343)>`
 
 **Note:**
-- "NE" means never ending. Whenever one of these payloads is encountered it will be updated with a new one.
+- "NE" means never ending. For variables such as `__NEUUID__` and `__NERINT__` a new value will be generated each time.
 - Variables are marked by the variable marker `__`, this can be configured within the extension if it conflicts with the
 application you're testing
 - Magic variables will only operate on requests that are in scope
