@@ -1,0 +1,47 @@
+package burp_magicvars.util;
+
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.http.message.HttpHeader;
+import burp.api.montoya.http.message.params.HttpParameterType;
+
+public class ParameterEncoder {
+    private MontoyaApi api = null;
+    private HttpParameterType parameterType = null;
+    private String contentType = "";
+
+    public ParameterEncoder() {
+
+    }
+
+    public ParameterEncoder(MontoyaApi api, HttpParameterType parameterType, HttpHeader contentTypeHeader) {
+        this.api = api;
+        this.parameterType = parameterType;
+        if ( contentTypeHeader != null ) {
+            contentType = contentTypeHeader.value();
+        }
+    }
+
+    public String encodeParameter(String value ) {
+        if ( parameterType == null || api == null || contentType == null ) {
+            return value;
+        }
+        String encodedValue = value;
+        switch ( parameterType ) {
+            case URL:
+                encodedValue = api.utilities().urlUtils().encode(value);
+                break;
+            case BODY:
+                if ( contentType.matches("(?i).*x-www-form-urlencoded.*")) {
+                    encodedValue = api.utilities().urlUtils().encode(value);
+                }
+                break;
+            case XML:
+                break;
+            case XML_ATTRIBUTE:
+                break;
+            case JSON:
+                break;
+        }
+        return encodedValue;
+    }
+}
