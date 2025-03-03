@@ -1,4 +1,4 @@
-# Magic Variables
+# 🪄 Magic Variables
 Magic variables is a Burp extension that provides helpful replacements in traffic such as random integers, random UUIDs
 and random strings. This allows pentesters to easily correlate sinks with their sources. The use of built-in variables
 such as `__NEUUID__` and `__NERINT__` is also particularly useful for dynamic scans where a request may require a unique
