@@ -6,6 +6,10 @@ import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
+import burp.api.montoya.proxy.http.InterceptedRequest;
+import burp.api.montoya.proxy.http.ProxyRequestHandler;
+import burp.api.montoya.proxy.http.ProxyRequestReceivedAction;
+import burp.api.montoya.proxy.http.ProxyRequestToBeSentAction;
 import burp_magicvars.MagicVariable;
 import burp_magicvars.config.MagicVariableListExport;
 import burp_magicvars.enums.EditorState;
@@ -30,7 +34,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 
 
-public class MagicVarsConfigController extends AbstractController<MagicVarsConfigControllerEvent, MagicVarsConfigModel> implements HttpHandler {
+public class MagicVarsConfigController extends AbstractController<MagicVarsConfigControllerEvent, MagicVarsConfigModel> implements HttpHandler, ProxyRequestHandler {
     private MontoyaApi api;
     private MagicVarsReplacer magicVarsReplacer;
 
@@ -204,7 +208,7 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
         Requests
      */
 
-    public HttpRequest processMagicVariables(HttpRequestToBeSent request ) {
+    public HttpRequest processMagicVariables(HttpRequest request ) {
         if ( !api.scope().isInScope(request.url())) {
             return request;
         }
@@ -268,6 +272,7 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
         return modifiedRequest;
     }
 
+
     @Override
     public RequestToBeSentAction handleHttpRequestToBeSent(HttpRequestToBeSent request) {
         return RequestToBeSentAction.continueWith(processMagicVariables(request));
@@ -278,4 +283,13 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
         return ResponseReceivedAction.continueWith(processMagicVariables(response));
     }
 
+    @Override
+    public ProxyRequestReceivedAction handleRequestReceived(InterceptedRequest request) {
+        return ProxyRequestReceivedAction.continueWith(processMagicVariables((HttpRequest)request));
+    }
+
+    @Override
+    public ProxyRequestToBeSentAction handleRequestToBeSent(InterceptedRequest request) {
+        return null;
+    }
 }

@@ -36,6 +36,7 @@ public class BurpMagicVars implements BurpExtension, ExtensionUnloadingHandler {
         this.tab = buildTab();
         api.userInterface().registerSuiteTab(EXTENSION_PRETTY_NAME, this.tab);
         api.http().registerHttpHandler(magicVarsConfig.controller);
+        api.proxy().registerRequestHandler(magicVarsConfig.controller);
         for (AbstractModel<?> model : getModels()) {
             model.load(config);
         }

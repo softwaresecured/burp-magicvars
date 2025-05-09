@@ -1,12 +1,8 @@
 import burp.api.montoya.collaborator.Collaborator;
 import burp_magicvars.MagicVariable;
-import burp_magicvars.config.MagicVariableListExport;
 import burp_magicvars.enums.MagicVariableType;
 import burp_magicvars.util.MagicVarsReplacer;
 import burp_magicvars.util.ParameterEncoder;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
