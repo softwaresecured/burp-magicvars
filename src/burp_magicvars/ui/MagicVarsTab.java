@@ -1,5 +1,6 @@
 package burp_magicvars.ui;
 
+import burp_magicvars.enums.EditorState;
 import burp_magicvars.view.MagicVarsConfigView;
 
 import javax.swing.*;
@@ -177,7 +178,6 @@ public class MagicVarsTab extends JPanel {
         gbc.gridy = 0;
         pnlVariableDynamicSettings.add(magicVarsConfigView.jspnWriteRegexCaptureGroup,gbc);
 
-
         // Current variable settings container
         JPanel pnlVariableConfig = new JPanel();
         pnlVariableConfig.setLayout(new GridBagLayout());
@@ -197,7 +197,7 @@ public class MagicVarsTab extends JPanel {
         gbc.ipady = 5;
         gbc.weightx = 1;
         gbc.gridx = 0;
-        gbc.gridy = idy;
+        gbc.gridy = idy++;
         pnlVariableConfig.add(pnlVariableDynamicSettings,gbc);
 
         // Variables list
@@ -207,7 +207,7 @@ public class MagicVarsTab extends JPanel {
         magicVarsConfigView.jtblCustomMagicVariables.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JPanel pnlVariableList = new JPanel();
         pnlVariableList.setLayout(new GridBagLayout());
-        pnlVariableList.setBorder(BorderFactory.createTitledBorder("Variable configuration"));
+        pnlVariableList.setBorder(BorderFactory.createTitledBorder("Current variables"));
 
         gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
@@ -217,9 +217,61 @@ public class MagicVarsTab extends JPanel {
         gbc.gridy = 0;
         pnlVariableList.add(jscrollVariables,gbc);
 
+        // Enabled sources
+        JPanel pnlEnabledSourcesSettings = new JPanel();
+        pnlEnabledSourcesSettings.setLayout(new GridBagLayout());
+        idx = 0;
+
+        gbc = new GridBagConstraints();
+        gbc.insets = new Insets(0,2,0,2);
+        gbc.gridx = idx++;
+        gbc.gridy = 0;
+        pnlEnabledSourcesSettings.add(magicVarsConfigView.jchkToolSourceProxy,gbc);
+
+        gbc = new GridBagConstraints();
+        gbc.insets = new Insets(0,2,0,2);
+        gbc.gridx = idx++;
+        gbc.gridy = 0;
+        pnlEnabledSourcesSettings.add(magicVarsConfigView.jchkToolSourceProxy,gbc);
+
+        gbc = new GridBagConstraints();
+        gbc.insets = new Insets(0,2,0,2);
+        gbc.gridx = idx++;
+        gbc.gridy = 0;
+        pnlEnabledSourcesSettings.add(magicVarsConfigView.jchkToolSourceRepeater,gbc);
+
+        gbc = new GridBagConstraints();
+        gbc.insets = new Insets(0,2,0,2);
+        gbc.gridx = idx++;
+        gbc.gridy = 0;
+        pnlEnabledSourcesSettings.add(magicVarsConfigView.jchkToolSourceExtensions,gbc);
+
+        gbc = new GridBagConstraints();
+        gbc.insets = new Insets(0,2,0,2);
+        gbc.gridx = idx++;
+        gbc.gridy = 0;
+        pnlEnabledSourcesSettings.add(magicVarsConfigView.jchkToolSourceIntruder,gbc);
+
+        gbc = new GridBagConstraints();
+        gbc.insets = new Insets(0,2,0,2);
+        gbc.gridx = idx++;
+        gbc.gridy = 0;
+        pnlEnabledSourcesSettings.add(magicVarsConfigView.jchkToolSourceScanner,gbc);
+
+        idx = 0;
         // General settings ( at the bottom )
         JPanel pnlGeneralSettings = new JPanel();
         pnlGeneralSettings.setLayout(new GridBagLayout());
+
+        gbc = new GridBagConstraints();
+        gbc.gridx = idx++;
+        gbc.gridy = 0;
+        pnlGeneralSettings.add(new JLabel("Enabled sources"),gbc);
+
+        gbc = new GridBagConstraints();
+        gbc.gridx = idx++;
+        gbc.gridy = 0;
+        pnlGeneralSettings.add(pnlEnabledSourcesSettings,gbc);
 
         gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -336,6 +388,12 @@ public class MagicVarsTab extends JPanel {
         magicVarsConfigView.jspnReadRegexCaptureGroup.setEnabled(false);
         magicVarsConfigView.jtxtWriteRegex.setEnabled(false);
         magicVarsConfigView.jspnWriteRegexCaptureGroup.setEnabled(false);
+
+        magicVarsConfigView.jchkToolSourceExtensions.setSelected(true);
+        magicVarsConfigView.jchkToolSourceIntruder.setSelected(true);
+        magicVarsConfigView.jchkToolSourceProxy.setSelected(true);
+        magicVarsConfigView.jchkToolSourceScanner.setSelected(true);
+        magicVarsConfigView.jchkToolSourceRepeater.setSelected(true);
 
     }
 
