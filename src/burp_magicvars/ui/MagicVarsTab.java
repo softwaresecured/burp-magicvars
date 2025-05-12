@@ -1,6 +1,5 @@
 package burp_magicvars.ui;
 
-import burp_magicvars.enums.EditorState;
 import burp_magicvars.view.MagicVarsConfigView;
 
 import javax.swing.*;
@@ -341,6 +340,14 @@ public class MagicVarsTab extends JPanel {
         gbc.gridy = 2;
         gbc.ipady = 5;
         add(pnlGeneralSettings,gbc);
+
+        gbc = new GridBagConstraints();
+        gbc.insets = new Insets(2,0,2,0);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        add(magicVarsConfigView.jtxtUpdateAvailableMessage,gbc);
     }
 
     private void initComponents() {
@@ -395,6 +402,11 @@ public class MagicVarsTab extends JPanel {
         magicVarsConfigView.jchkToolSourceScanner.setSelected(true);
         magicVarsConfigView.jchkToolSourceRepeater.setSelected(true);
 
+        magicVarsConfigView.jtxtUpdateAvailableMessage.setVisible(false);
+        magicVarsConfigView.jtxtUpdateAvailableMessage.setBorder(BorderFactory.createEmptyBorder());
+        magicVarsConfigView.jtxtUpdateAvailableMessage.setEditable(false);
+        magicVarsConfigView.jtxtUpdateAvailableMessage.setHighlighter(null);
+        magicVarsConfigView.jtxtUpdateAvailableMessage.setContentType("text/html");
     }
 
     private void setPreferredWidth(JComponent field, int width) {

@@ -46,6 +46,8 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
     public final JCheckBox jchkToolSourceExtensions = new JCheckBox("Extensions");
     public final JCheckBox jchkToolSourceScanner = new JCheckBox("Scanner");
 
+    public final JTextPane jtxtUpdateAvailableMessage = new JTextPane();
+
     private Component parentComponent;
 
     public MagicVarsConfigView(MagicVarsConfigModel model) {
@@ -93,6 +95,7 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
 
         attach(jtxtLeftVariableMarker,MagicVarsConfigControllerEvent.LEFT_VARIABLE_MARKER_CHANGED);
         attach(jtxtRightVariableMarker,MagicVarsConfigControllerEvent.RIGHT_VARIABLE_MARKER_CHANGED);
+        attachClick(jtxtUpdateAvailableMessage, MagicVarsConfigControllerEvent.DISMISS_UPDATE);
     }
 
     @Override
@@ -168,6 +171,14 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
                 jchkToolSourceIntruder.setSelected(getModel().getEnabledToolSources().contains("Intruder"));
                 jchkToolSourceScanner.setSelected(getModel().getEnabledToolSources().contains("Scanner"));
                 break;
+            case UPDATE_AVAILABLE_MESSAGE_UPDATED:
+                if ( getModel().getUpdateAvailableMessage() != null ) {
+                    jtxtUpdateAvailableMessage.setVisible(true);
+                    jtxtUpdateAvailableMessage.setText(getModel().getUpdateAvailableMessage());
+                }
+                else {
+                    jtxtUpdateAvailableMessage.setVisible(false);
+                }
         }
     }
 
@@ -196,6 +207,8 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
 
         jbtnMoveUp.setEnabled(editorState == EditorState.EDIT ? true : false);
         jbtnMoveDown.setEnabled(editorState == EditorState.EDIT ? true : false);
+
+        jtxtUpdateAvailableMessage.setVisible(false);
 
 
         if ( editorState.equals(EditorState.EDIT) ) {

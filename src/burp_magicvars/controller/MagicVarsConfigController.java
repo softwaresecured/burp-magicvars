@@ -182,6 +182,8 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
             case TOGGLE_SOURCE_EXTENSIONS:
                 getModel().toggleTrafficSource(ToolType.EXTENSIONS,(boolean) next);
                 break;
+            case DISMISS_UPDATE:
+                getModel().setUpdateAvailableMessage(null);
         }
     }
 
