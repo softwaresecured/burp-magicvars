@@ -27,5 +27,6 @@ public enum MagicVarsConfigControllerEvent {
     TOGGLE_SOURCE_SCANNER,
     TOGGLE_SOURCE_PROXY,
     TOGGLE_SOURCE_EXTENSIONS,
+    DISMISS_UPDATE,
     EXPORT_VARIABLES
 }

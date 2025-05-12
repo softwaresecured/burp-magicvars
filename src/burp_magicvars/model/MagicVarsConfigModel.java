@@ -51,7 +51,8 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
     private String leftVariableMarker = null;
     private String rightVariableMarker = null;
 
-
+    // Updates available
+    private String updateAvailableMessage = null;
 
     private final DefaultTableModel customVariablesModel;
     public MagicVarsConfigModel() {
@@ -283,6 +284,16 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         var old = this.rightVariableMarker;
         this.rightVariableMarker = rightVariableMarker;
         emit(MagicVarsConfigModelEvent.VARIABLE_RIGHT_VARIABLE_MARKER_UPDATED, old, rightVariableMarker);
+    }
+
+    public String getUpdateAvailableMessage() {
+        return updateAvailableMessage;
+    }
+
+    public void setUpdateAvailableMessage(String updateAvailableMessage) {
+        var old = this.updateAvailableMessage;
+        this.updateAvailableMessage = updateAvailableMessage;
+        emit(MagicVarsConfigModelEvent.UPDATE_AVAILABLE_MESSAGE_UPDATED, old, updateAvailableMessage);
     }
 
     public EditorState getEditorState() {
