@@ -40,6 +40,12 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
     public final JButton jbtnImportVariables = new JButton("Import");
     public final JButton jbtnExportVariables = new JButton("Export");
 
+    public final JCheckBox jchkToolSourceProxy = new JCheckBox("Proxy");
+    public final JCheckBox jchkToolSourceRepeater = new JCheckBox("Repeater");
+    public final JCheckBox jchkToolSourceIntruder = new JCheckBox("Intruder");
+    public final JCheckBox jchkToolSourceExtensions = new JCheckBox("Extensions");
+    public final JCheckBox jchkToolSourceScanner = new JCheckBox("Scanner");
+
     private Component parentComponent;
 
     public MagicVarsConfigView(MagicVarsConfigModel model) {
@@ -66,6 +72,12 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
         attach(jchkEnabled, MagicVarsConfigControllerEvent.TOGGLE_ENABLED);
         attach(jspnReadRegexCaptureGroup, MagicVarsConfigControllerEvent.UPDATE_READ_CAPTURE_GROUP);
         attach(jspnWriteRegexCaptureGroup, MagicVarsConfigControllerEvent.UPDATE_WRITE_CAPTURE_GROUP);
+
+        attach(jchkToolSourceIntruder,MagicVarsConfigControllerEvent.TOGGLE_SOURCE_INTRUDER);
+        attach(jchkToolSourceRepeater,MagicVarsConfigControllerEvent.TOGGLE_SOURCE_REPEATER);
+        attach(jchkToolSourceScanner,MagicVarsConfigControllerEvent.TOGGLE_SOURCE_SCANNER);
+        attach(jchkToolSourceProxy,MagicVarsConfigControllerEvent.TOGGLE_SOURCE_PROXY);
+        attach(jchkToolSourceExtensions,MagicVarsConfigControllerEvent.TOGGLE_SOURCE_EXTENSIONS);
 
         attachSelection(jtblCustomMagicVariables,MagicVarsConfigControllerEvent.ROW_SELECTION_UPDATE);
         attachTableModelChangeListener(jtblCustomMagicVariables.getModel(),MagicVarsConfigControllerEvent.VARIABLES_TABLE_MODEL_CHANGED);
@@ -149,6 +161,13 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
             case VARIABLE_ORDER_UPDATED:
                 jtblCustomMagicVariables.getSelectionModel().setSelectionInterval((Integer)next,(Integer)next);
                 break;
+            case ENABLED_SOURCES_UPDATED:
+                jchkToolSourceProxy.setSelected(getModel().getEnabledToolSources().contains("Proxy"));
+                jchkToolSourceRepeater.setSelected(getModel().getEnabledToolSources().contains("Repeater"));
+                jchkToolSourceExtensions.setSelected(getModel().getEnabledToolSources().contains("Extensions"));
+                jchkToolSourceIntruder.setSelected(getModel().getEnabledToolSources().contains("Intruder"));
+                jchkToolSourceScanner.setSelected(getModel().getEnabledToolSources().contains("Scanner"));
+                break;
         }
     }
 
@@ -177,6 +196,7 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
 
         jbtnMoveUp.setEnabled(editorState == EditorState.EDIT ? true : false);
         jbtnMoveDown.setEnabled(editorState == EditorState.EDIT ? true : false);
+
 
         if ( editorState.equals(EditorState.EDIT) ) {
             if ( getModel().getCurrentVariableOrder() < 1 ) {
