@@ -249,8 +249,11 @@ public class MagicVarsReplacer {
             if ( repeatStrMatcher.find() && repeatStrMatcher.groupCount() == 2) {
                 String repeatStr = repeatStrMatcher.group(1);
                 int repeatCount = Integer.parseInt(repeatStrMatcher.group(2));
-                param = repeatStrPattern.matcher(param).replaceAll(repeatStr.repeat(repeatCount));
-                emit(MagicVarsReplacementEvent.REPLACEMENT_MADE,null,"REPEATSTR_CHR_COUNT");
+                // Refuse to make a string longer than 100mb
+                if (repeatCount <= 100000000) {
+                    param = repeatStrPattern.matcher(param).replaceAll(repeatStr.repeat(repeatCount));
+                    emit(MagicVarsReplacementEvent.REPLACEMENT_MADE, null, "REPEATSTR_CHR_COUNT");
+                }
             }
 
             // Process builtin
