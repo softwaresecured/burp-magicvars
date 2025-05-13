@@ -79,7 +79,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
     public void load(AbstractConfig config) {
         setLeftVariableMarker(config.getString(ConfigKey.LEFT_TEMPLATE_STRING, DEFAULT_LEFT_MARKER));
         setRightVariableMarker(config.getString(ConfigKey.RIGHT_TEMPLATE_STRING, DEFAULT_RIGHT_MARKER));
-        setEnabledToolSources(new ArrayList<String>(Arrays.asList(config.getString(ConfigKey.ENABLED_SOURCES,"").split(","))));
+        setEnabledToolSources(new ArrayList<String>(Arrays.asList(config.getString(ConfigKey.ENABLED_SOURCES,"Proxy,Extensions,Repeater,Intruder,Scanner").split(","))));
         try {
             if ( config.getString(ConfigKey.CUSTOM_VARIABLES) != null && config.getString(ConfigKey.CUSTOM_VARIABLES).length() > 0 ) {
                 importVariablesFromJSON(config.getString(ConfigKey.CUSTOM_VARIABLES));

@@ -26,6 +26,13 @@ a collaborator address.
 - `__LNAME__` - A random last name
 - `__LOREMIPSUM__` - A random latin word
 - `__LOREMIPSUMSENTENCE__` - A random latin sentence
+- `__REPEATSTR__STR__COUNT__` - A repeated string where `STR` is repeated `COUNT` times
+- `__XSS__` - A standard XSS payload ( with `RINT` )
+- `__XSSPG__` - A polyglot XSS payload ( with `RINT` )
+- `__SSTI__` - The standard SSTI polyglot
+- `__XXE__` - An XXE payload ( with `OOB` )
+- `__HTMLOOB__` - An HTML injection test ( with `OOB` )
+- `__JSOOB__` - A JavaScript injection test ( with `OOB` )
 
 ### Example usage:
 - Use a dynamic variable to read a value from a response with `sessionid='([^']+)'` and write it to a request 
