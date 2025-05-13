@@ -3,6 +3,7 @@ package burp_magicvars;
 import burp_magicvars.enums.MagicVariableType;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -58,11 +59,11 @@ public class MagicVariable {
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
+                ", enabled=" + enabled +
                 ", magicVariableType=" + magicVariableType +
                 ", initialValue='" + initialValue + '\'' +
                 ", pathScopeRegex=" + pathScopeRegex +
                 ", order=" + order +
-                ", enabled=" + enabled +
                 ", readRegex=" + readRegex +
                 ", writeRegex=" + writeRegex +
                 ", readCaptureGroup=" + readCaptureGroup +

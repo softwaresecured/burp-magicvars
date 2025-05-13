@@ -15,6 +15,16 @@ import burp_magicvars.ui.MagicVarsTab;
 import burp_magicvars.util.Logger;
 import burp_magicvars.view.MagicVarsConfigView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 public class BurpMagicVars implements BurpExtension, ExtensionUnloadingHandler {
     public static final String EXTENSION_NAME = "Burp MagicVars";
@@ -23,6 +33,7 @@ public class BurpMagicVars implements BurpExtension, ExtensionUnloadingHandler {
     private MagicVarsTab tab;
     private MVC<MagicVarsConfigModel, MagicVarsConfigView, MagicVarsConfigController> magicVarsConfig;
     private MontoyaConfig config;
+    private Thread updateCheckerThread = null;
 
     @Override
     public void initialize(MontoyaApi api) {
@@ -41,6 +52,10 @@ public class BurpMagicVars implements BurpExtension, ExtensionUnloadingHandler {
             model.load(config);
         }
         api.extension().registerUnloadingHandler(this);
+        UpdateChecker updateChecker = new UpdateChecker();
+        updateCheckerThread = new Thread(updateChecker);
+        updateCheckerThread.start();
+
     }
 
     public MagicVarsTab buildTab() {
@@ -76,6 +91,57 @@ public class BurpMagicVars implements BurpExtension, ExtensionUnloadingHandler {
     public void extensionUnloaded() {
         for (AbstractModel<?> model : getModels()) {
             model.save(config);
+        }
+        if ( updateCheckerThread != null ) {
+            try {
+                updateCheckerThread.join();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    class UpdateChecker implements Runnable {
+        private String getLatestVersion() throws IOException, URISyntaxException {
+            String latestVersion = null;
+            URL url = new URI(VERSION.RELEASE_TAGS_URL).toURL();
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(5000);
+            if ( conn.getResponseCode() == 200 ) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                StringBuffer content = new StringBuffer();
+                while ((line = in.readLine()) != null) {
+                    content.append(line);
+                }
+                in.close();
+                conn.disconnect();
+                Pattern p = Pattern.compile("releases\\/tag\\/([^\"]+)\"");
+                Matcher m = p.matcher(content);
+                if ( m.find() ) {
+                    latestVersion = m.group(1);
+                }
+            }
+            return latestVersion;
+        }
+        @Override
+        public void run() {
+            try {
+                String latestVersion = getLatestVersion();
+                if( latestVersion != null ) {
+                    if ( !VERSION.getVersionStrPlain().equals(latestVersion)) {
+                        magicVarsConfig.getModel().setUpdateAvailableMessage("<html><center><a href=\"\">A new update is available (Click to dismiss)</a></center></html>");
+                    }
+                    Logger.log("INFO", String.format("Update %s is available", latestVersion));
+                }
+                else {
+                    Logger.log("ERROR", String.format("Error fetching updates - Could not fetch tags from %s", VERSION.RELEASE_TAGS_URL));
+                }
+            } catch (IOException | URISyntaxException e) {
+                Logger.log("ERROR", String.format("Error fetching updates - Could not fetch tags from %s", VERSION.RELEASE_TAGS_URL));
+            }
         }
     }
 

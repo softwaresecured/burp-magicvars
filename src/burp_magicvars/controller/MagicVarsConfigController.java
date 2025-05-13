@@ -1,6 +1,7 @@
 package burp_magicvars.controller;
 
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ToolType;
 import burp.api.montoya.http.handler.*;
 import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
@@ -166,6 +167,23 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                     }
                 }
                 break;
+            case TOGGLE_SOURCE_INTRUDER:
+                getModel().toggleTrafficSource(ToolType.INTRUDER,(boolean) next);
+                break;
+            case TOGGLE_SOURCE_REPEATER:
+                getModel().toggleTrafficSource(ToolType.REPEATER,(boolean) next);
+                break;
+            case TOGGLE_SOURCE_SCANNER:
+                getModel().toggleTrafficSource(ToolType.SCANNER,(boolean) next);
+                break;
+            case TOGGLE_SOURCE_PROXY:
+                getModel().toggleTrafficSource(ToolType.PROXY,(boolean) next);
+                break;
+            case TOGGLE_SOURCE_EXTENSIONS:
+                getModel().toggleTrafficSource(ToolType.EXTENSIONS,(boolean) next);
+                break;
+            case DISMISS_UPDATE:
+                getModel().setUpdateAvailableMessage(null);
         }
     }
 
@@ -275,7 +293,10 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
 
     @Override
     public RequestToBeSentAction handleHttpRequestToBeSent(HttpRequestToBeSent request) {
-        return RequestToBeSentAction.continueWith(processMagicVariables(request));
+        if ( getModel().getEnabledToolSources().contains(request.toolSource().toolType().toolName())) {
+            return RequestToBeSentAction.continueWith(processMagicVariables((HttpRequest)request));
+        }
+        return RequestToBeSentAction.continueWith(request);
     }
 
     @Override
@@ -285,7 +306,10 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
 
     @Override
     public ProxyRequestReceivedAction handleRequestReceived(InterceptedRequest request) {
-        return ProxyRequestReceivedAction.continueWith(processMagicVariables((HttpRequest)request));
+        if ( getModel().getEnabledToolSources().contains("Proxy")) {
+            return ProxyRequestReceivedAction.continueWith(processMagicVariables((HttpRequest)request));
+        }
+        return ProxyRequestReceivedAction.continueWith(request);
     }
 
     @Override

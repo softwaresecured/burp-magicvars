@@ -1,5 +1,6 @@
 package burp_magicvars.model;
 
+import burp.api.montoya.core.ToolType;
 import burp_magicvars.MagicVariable;
 import burp_magicvars.config.MagicVariableListExport;
 import burp_magicvars.enums.ConfigKey;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -23,7 +25,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
     public static final String DEFAULT_LEFT_MARKER = "__";
     public static final String DEFAULT_RIGHT_MARKER = "__";
 
-    // Editor settigns
+    // Editor settings
     private EditorState editorState = EditorState.INITIAL;
     private String lastVariableId = null;
     private int currentSelectedIdx = -1;
@@ -42,10 +44,15 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
     private int currentVariableReadCaptureGroup = 0;
     private int currentVariableWriteCaptureGroup = 0;
 
+    // Tool source
+    private ArrayList<String> currentVariableEnabledToolSources = new ArrayList<String>();
+
     private ArrayList<MagicVariable> magicVariables = new ArrayList<MagicVariable>();
     private String leftVariableMarker = null;
     private String rightVariableMarker = null;
 
+    // Updates available
+    private String updateAvailableMessage = null;
 
     private final DefaultTableModel customVariablesModel;
     public MagicVarsConfigModel() {
@@ -72,6 +79,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
     public void load(AbstractConfig config) {
         setLeftVariableMarker(config.getString(ConfigKey.LEFT_TEMPLATE_STRING, DEFAULT_LEFT_MARKER));
         setRightVariableMarker(config.getString(ConfigKey.RIGHT_TEMPLATE_STRING, DEFAULT_RIGHT_MARKER));
+        setEnabledToolSources(new ArrayList<String>(Arrays.asList(config.getString(ConfigKey.ENABLED_SOURCES,"Proxy,Extensions,Repeater,Intruder,Scanner").split(","))));
         try {
             if ( config.getString(ConfigKey.CUSTOM_VARIABLES) != null && config.getString(ConfigKey.CUSTOM_VARIABLES).length() > 0 ) {
                 importVariablesFromJSON(config.getString(ConfigKey.CUSTOM_VARIABLES));
@@ -85,6 +93,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
     public void save(AbstractConfig config) {
         config.setString(ConfigKey.LEFT_TEMPLATE_STRING, getLeftVariableMarker());
         config.setString(ConfigKey.RIGHT_TEMPLATE_STRING, getRightVariableMarker());
+        config.setString(ConfigKey.ENABLED_SOURCES, String.join(",", getEnabledToolSources().stream().toArray(String[]::new)));
         try {
             config.setString(ConfigKey.CUSTOM_VARIABLES,exportVariablesAsJSON());
         } catch (JsonProcessingException e) {
@@ -121,6 +130,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         currentVariableWriteRegex = "";
         currentVariableReadCaptureGroup = 1;
         currentVariableWriteCaptureGroup = 1;
+        currentVariableEnabledToolSources.clear();
         setCurrentVariableId(null);
     }
 
@@ -234,6 +244,27 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         emit(MagicVarsConfigModelEvent.CURRENT_VARIABLE_WRITE_CAPTURE_GROUP_UPDATED, old, currentVariableWriteCaptureGroup);
     }
 
+    public ArrayList<String> getEnabledToolSources() {
+        return currentVariableEnabledToolSources;
+    }
+
+    public void setEnabledToolSources(ArrayList<String> enabledToolSources) {
+        var old = this.currentVariableEnabledToolSources;
+        this.currentVariableEnabledToolSources = enabledToolSources;
+        emit(MagicVarsConfigModelEvent.ENABLED_SOURCES_UPDATED, old, enabledToolSources);
+    }
+
+    public void toggleTrafficSource(ToolType toolType, boolean enabled ) {
+        if ( enabled ) {
+            if (!currentVariableEnabledToolSources.contains(toolType.toolName())) {
+                currentVariableEnabledToolSources.add(toolType.toolName());
+            }
+        }
+        else {
+            currentVariableEnabledToolSources.remove(toolType.toolName());
+        }
+    }
+
     public String getLeftVariableMarker() {
         return leftVariableMarker;
     }
@@ -253,6 +284,16 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         var old = this.rightVariableMarker;
         this.rightVariableMarker = rightVariableMarker;
         emit(MagicVarsConfigModelEvent.VARIABLE_RIGHT_VARIABLE_MARKER_UPDATED, old, rightVariableMarker);
+    }
+
+    public String getUpdateAvailableMessage() {
+        return updateAvailableMessage;
+    }
+
+    public void setUpdateAvailableMessage(String updateAvailableMessage) {
+        var old = this.updateAvailableMessage;
+        this.updateAvailableMessage = updateAvailableMessage;
+        emit(MagicVarsConfigModelEvent.UPDATE_AVAILABLE_MESSAGE_UPDATED, old, updateAvailableMessage);
     }
 
     public EditorState getEditorState() {
