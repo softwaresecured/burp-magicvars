@@ -227,15 +227,22 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
      */
 
     public HttpRequest processMagicVariables(HttpRequest request ) {
+        /*
+            Design considerations:
+                - https://github.com/PortSwigger/burp-extensions-montoya-api/issues/103
+         */
+
+        // Ignore if not in scope
         if ( !api.scope().isInScope(request.url())) {
             return request;
         }
-        /*
-            https://github.com/PortSwigger/burp-extensions-montoya-api/issues/103
-         */
+
         HttpRequest modifiedRequest = request;
         ArrayList<HttpParameter> modifiedParameters = new ArrayList<HttpParameter>();
-        // Replace parameters
+
+        /*
+            Handle replacements for anything that isn't json/xml/formdata
+         */
         for (HttpParameter p : request.parameters() ) {
             String param  = p.value();
             if ( p.type().equals(HttpParameterType.JSON) || p.type().equals(HttpParameterType.XML) || p.type().equals(HttpParameterType.XML_ATTRIBUTE )) {
@@ -244,49 +251,42 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
             else {
                 param = magicVarsReplacer.processStaticVariables(getModel().getMagicVariables(),param, new ParameterEncoder(api,p.type(),request.header("content-type")));
                 param = magicVarsReplacer.processDynamicVariables(getModel().getMagicVariables(),param, new ParameterEncoder(api,p.type(),request.header("content-type")));
-                modifiedParameters.add(HttpParameter.parameter(p.name(),param,p.type()));
+                if ( !p.value().equals(param)) {
+                    modifiedParameters.add(HttpParameter.parameter(p.name(), param, p.type()));
+                }
             }
 
         }
-        modifiedRequest = modifiedRequest.withUpdatedParameters(modifiedParameters);
+        // Merge the updated parameters into a new request if there are any changes
+        if (!modifiedParameters.isEmpty()) {
+            modifiedRequest = modifiedRequest.withUpdatedParameters(modifiedParameters);
+        }
 
-        // TODO: Null is passed in for json/xml etc, need to handle differently for each type
-
-        // Replace in the body
-        if ( request.header("content-type") != null ) {
-            if ( request.header("content-type").value().matches("(?i).*(text|xml|json|x-www-form-urlencoded).*")) {
-                modifiedRequest = modifiedRequest.withBody(magicVarsReplacer.processStaticVariables(
+        /*
+            Do full body replacement for text/json/xml/formdata or null content-type
+         */
+        String contentType = request.header("content-type") == null ? "" : request.header("content-type").value();
+        if ( request.header("content-type") == null || contentType.matches("(?i).*(text|xml|json|x-www-form-urlencoded).*")) {
+            if ( request.body().length() > 0 ) {
+                String preProcess = modifiedRequest.toString();
+                // Statics
+                String postProcess = magicVarsReplacer.processStaticVariables(
                         getModel().getMagicVariables(),
-                        modifiedRequest.bodyToString(),
+                        preProcess,
                         new ParameterEncoder()
-                ));
-                modifiedRequest = modifiedRequest.withBody(magicVarsReplacer.processDynamicVariables(
-                        getModel().getMagicVariables(),modifiedRequest.bodyToString(),
+                );
+                // Dynamics
+                postProcess = magicVarsReplacer.processDynamicVariables(
+                        getModel().getMagicVariables(),
+                        postProcess,
                         new ParameterEncoder()
-                ));
+                );
+                if ( preProcess != postProcess ) {
+                    modifiedRequest = HttpRequest.httpRequest(modifiedRequest.httpService(),postProcess);
+                }
             }
         }
 
-        String contentLength = request.header("content-type") == null ? "" : request.header("content-type").value();
-        if ( contentLength.matches("(?i).*(text|xml|json|x-www-form-urlencoded).*") || request.body().length() == 0) {
-
-            String preProcess = modifiedRequest.toString();
-            // Statics
-            String postProcess = magicVarsReplacer.processStaticVariables(
-                    getModel().getMagicVariables(),
-                    preProcess,
-                    new ParameterEncoder()
-            );
-            // Dynamics
-            postProcess = magicVarsReplacer.processDynamicVariables(
-                    getModel().getMagicVariables(),
-                    postProcess,
-                    new ParameterEncoder()
-            );
-            if ( preProcess != postProcess ) {
-                modifiedRequest = HttpRequest.httpRequest(modifiedRequest.httpService(),postProcess);
-            }
-        }
         return modifiedRequest;
     }
 
