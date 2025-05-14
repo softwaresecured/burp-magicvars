@@ -257,30 +257,74 @@ public class MagicVarsReplacer {
             }
 
             // Process builtin
-            param = emitIfChanged(prepareVariableName("RINT"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("RINT")), parameterEncoder.encodeParameter(getRint())));
-            param = emitIfChanged(prepareVariableName("FNAME"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("FNAME")), parameterEncoder.encodeParameter(getFName())));
-            param = emitIfChanged(prepareVariableName("LNAME"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("LNAME")), parameterEncoder.encodeParameter(getLName())));
-            param = emitIfChanged(prepareVariableName("LOREMIPSUM"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("LOREMIPSUM")), parameterEncoder.encodeParameter(getLoremIpsum())));
-            param = emitIfChanged(prepareVariableName("LOREMIPSUMSENTENCE"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("LOREMIPSUMSENTENCE")), parameterEncoder.encodeParameter(getLoremIpsumSentence())));
-            param = emitIfChanged(prepareVariableName("NERINT"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("NERINT")), parameterEncoder.encodeParameter(getNeRint())));
-            param = emitIfChanged(prepareVariableName("NERINT"), param, param.replaceAll("(?i)55\\d{4}66", parameterEncoder.encodeParameter(getNeRint())));
-            param = emitIfChanged(prepareVariableName("RANDSTR"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("RANDSTR")), parameterEncoder.encodeParameter(getRandStr())));
-            param = emitIfChanged(prepareVariableName("NERANDSTR"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("NERANDSTR")), parameterEncoder.encodeParameter(getNeRandStr())));
-            param = emitIfChanged(prepareVariableName("NERANDSTR"), param, param.replaceAll("(?i)(?i)XX[a-z]{4}YY", parameterEncoder.encodeParameter(getNeRandStr())));
-            param = emitIfChanged(prepareVariableName("UUID"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("UUID")), parameterEncoder.encodeParameter(UUID.randomUUID().toString())));
-            param = emitIfChanged(prepareVariableName("NEUUID"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("NEUUID")), parameterEncoder.encodeParameter(getNeUUID())));
-            param = emitIfChanged(prepareVariableName("NEUUID"), param, param.replaceAll("(?i)(?i)[a-f0-9]{8}-[a-f0-9]{2}de-adbe-ef[a-f0-9]{2}-[a-f0-9]{12}", parameterEncoder.encodeParameter(getNeUUID())));
-            param = emitIfChanged(prepareVariableName("TIMESTAMP"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("TIMESTAMP")), parameterEncoder.encodeParameter(getUnixTimestamp())));
-            param = emitIfChanged(prepareVariableName("XSS"),param,param.replaceAll("(?i)%s".formatted(prepareVariableName("XSS")),parameterEncoder.encodeParameter(getXSS())));
-            param = emitIfChanged(prepareVariableName("XSSPG"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("XSSPG")), parameterEncoder.encodeParameter(getXSSPG())));
-            param = emitIfChanged(prepareVariableName("SSTI"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("SSTI")), parameterEncoder.encodeParameter(getSSTI())));
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("RINT")))) {
+                param = emitIfChanged(prepareVariableName("RINT"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("RINT")), parameterEncoder.encodeParameter(getRint())));
+            }
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("FNAME")))) {
+                param = emitIfChanged(prepareVariableName("FNAME"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("FNAME")), parameterEncoder.encodeParameter(getFName())));
+            }
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("LNAME")))) {
+                param = emitIfChanged(prepareVariableName("LNAME"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("LNAME")), parameterEncoder.encodeParameter(getLName())));
+            }
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("LOREMIPSUM")))) {
+                param = emitIfChanged(prepareVariableName("LOREMIPSUM"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("LOREMIPSUM")), parameterEncoder.encodeParameter(getLoremIpsum())));
+            }
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("LOREMIPSUMSENTENCE")))) {
+                param = emitIfChanged(prepareVariableName("LOREMIPSUMSENTENCE"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("LOREMIPSUMSENTENCE")), parameterEncoder.encodeParameter(getLoremIpsumSentence())));
+            }
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("NERINT")))) {
+                param = emitIfChanged(prepareVariableName("NERINT"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("NERINT")), parameterEncoder.encodeParameter(getNeRint())));
+            }
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("RANDSTR")))) {
+                param = emitIfChanged(prepareVariableName("RANDSTR"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("RANDSTR")), parameterEncoder.encodeParameter(getRandStr())));
+            }
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("NERANDSTR")))) {
+                param = emitIfChanged(prepareVariableName("NERANDSTR"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("NERANDSTR")), parameterEncoder.encodeParameter(getNeRandStr())));
+            }
 
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("UUID")))) {
+                param = emitIfChanged(prepareVariableName("UUID"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("UUID")), parameterEncoder.encodeParameter(UUID.randomUUID().toString())));
+            }
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("NEUUID")))) {
+                param = emitIfChanged(prepareVariableName("NEUUID"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("NEUUID")), parameterEncoder.encodeParameter(getNeUUID())));
+            }
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("TIMESTAMP")))) {
+                param = emitIfChanged(prepareVariableName("TIMESTAMP"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("TIMESTAMP")), parameterEncoder.encodeParameter(getUnixTimestamp())));
+            }
+            if ( RegexUtil.matches(param,"(?i).*%s.*".formatted(prepareVariableName("XSS")))) {
+                Logger.log("DEBUG", String.format("Matched %s",prepareVariableName("XSS")));
+                param = emitIfChanged(prepareVariableName("XSS"),param,param.replaceAll("(?i)%s".formatted(prepareVariableName("XSS")),parameterEncoder.encodeParameter(getXSS())));
+            }
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("XSSPG")))) {
+                param = emitIfChanged(prepareVariableName("XSSPG"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("XSSPG")), parameterEncoder.encodeParameter(getXSSPG())));
+            }
+            if ( RegexUtil.matches(param,"(?i).*%s.*".formatted(prepareVariableName("SSTI")))) {
+                param = emitIfChanged(prepareVariableName("SSTI"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("SSTI")), parameterEncoder.encodeParameter(getSSTI())));
+            }
+            // Regex based
+            if ( RegexUtil.matches(param,"(?i)55\\d{4}66")) {
+                param = emitIfChanged(prepareVariableName("NERINT"), param, param.replaceAll("(?i)55\\d{4}66", parameterEncoder.encodeParameter(getNeRint())));
+            }
+            if ( RegexUtil.matches(param,"(?i)(?i)[a-f0-9]{8}-[a-f0-9]{2}de-adbe-ef[a-f0-9]{2}-[a-f0-9]{12}")) {
+                param = emitIfChanged(prepareVariableName("NEUUID"), param, param.replaceAll("(?i)(?i)[a-f0-9]{8}-[a-f0-9]{2}de-adbe-ef[a-f0-9]{2}-[a-f0-9]{12}", parameterEncoder.encodeParameter(getNeUUID())));
+            }
+            if ( RegexUtil.matches(param,"(?i)(?i)XX[a-z]{4}YY")) {
+                param = emitIfChanged(prepareVariableName("NERANDSTR"), param, param.replaceAll("(?i)(?i)XX[a-z]{4}YY", parameterEncoder.encodeParameter(getNeRandStr())));
+            }
 
             if ( collaborator != null ) {
-                param = emitIfChanged(prepareVariableName("JSOOB"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("JSOOB")), parameterEncoder.encodeParameter(getJSOOB())));
-                param = emitIfChanged(prepareVariableName("HTMLOOB"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("HTMLOOB")), parameterEncoder.encodeParameter(getHTMLOOB())));
-                param = emitIfChanged(prepareVariableName("XXE"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("XXE")), parameterEncoder.encodeParameter(getXXE())));
-                param = emitIfChanged(prepareVariableName("OOB"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("OOB")), parameterEncoder.encodeParameter(collaborator.defaultPayloadGenerator().generatePayload().toString())));
+                if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("JSOOB")))) {
+                    param = emitIfChanged(prepareVariableName("JSOOB"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("JSOOB")), parameterEncoder.encodeParameter(getJSOOB())));
+                }
+                if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("HTMLOOB")))) {
+                    param = emitIfChanged(prepareVariableName("HTMLOOB"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("HTMLOOB")), parameterEncoder.encodeParameter(getHTMLOOB())));
+                }
+                if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("XXE")))) {
+                    param = emitIfChanged(prepareVariableName("XXE"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("XXE")), parameterEncoder.encodeParameter(getXXE())));
+                }
+                if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("OOB")))) {
+                    param = emitIfChanged(prepareVariableName("OOB"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("OOB")), parameterEncoder.encodeParameter(collaborator.defaultPayloadGenerator().generatePayload().toString())));
+                }
             }
         }
 
