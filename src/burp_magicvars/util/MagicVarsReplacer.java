@@ -271,7 +271,7 @@ public class MagicVarsReplacer {
             param = emitIfChanged(prepareVariableName("NEUUID"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("NEUUID")), parameterEncoder.encodeParameter(getNeUUID())));
             param = emitIfChanged(prepareVariableName("NEUUID"), param, param.replaceAll("(?i)(?i)[a-f0-9]{8}-[a-f0-9]{2}de-adbe-ef[a-f0-9]{2}-[a-f0-9]{12}", parameterEncoder.encodeParameter(getNeUUID())));
             param = emitIfChanged(prepareVariableName("TIMESTAMP"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("TIMESTAMP")), parameterEncoder.encodeParameter(getUnixTimestamp())));
-            param = emitIfChanged(prepareVariableName("XSS"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("XSS")), parameterEncoder.encodeParameter(getXSS())));
+            param = emitIfChanged(prepareVariableName("XSS"),param,param.replaceAll("(?i)%s".formatted(prepareVariableName("XSS")),parameterEncoder.encodeParameter(getXSS())));
             param = emitIfChanged(prepareVariableName("XSSPG"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("XSSPG")), parameterEncoder.encodeParameter(getXSSPG())));
             param = emitIfChanged(prepareVariableName("SSTI"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("SSTI")), parameterEncoder.encodeParameter(getSSTI())));
 
@@ -288,7 +288,7 @@ public class MagicVarsReplacer {
     }
 
     private String emitIfChanged(String variableName, String prev, String next ) {
-        if ( prev != next ) {
+        if (!Objects.equals(prev, next)) {
             emit(MagicVarsReplacementEvent.REPLACEMENT_MADE,null,variableName);
         }
         return next;
