@@ -250,7 +250,7 @@ public class MagicVarsReplacer {
                 String repeatStr = repeatStrMatcher.group(1);
                 int repeatCount = Integer.parseInt(repeatStrMatcher.group(2));
                 // Refuse to make a string longer than 100mb
-                if (repeatCount <= 100000000) {
+                if (repeatStr.length()*repeatCount <= 100000000) {
                     param = repeatStrPattern.matcher(param).replaceAll(repeatStr.repeat(repeatCount));
                     emit(MagicVarsReplacementEvent.REPLACEMENT_MADE, null, "REPEATSTR_CHR_COUNT");
                 }
