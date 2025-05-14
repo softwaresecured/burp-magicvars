@@ -132,9 +132,9 @@ public class BurpMagicVars implements BurpExtension, ExtensionUnloadingHandler {
                 String latestVersion = getLatestVersion();
                 if( latestVersion != null ) {
                     if ( !VERSION.getVersionStrPlain().equals(latestVersion)) {
-                        magicVarsConfig.getModel().setUpdateAvailableMessage("<html><center><a href=\"\">A new update is available (Click to dismiss)</a></center></html>");
+                        magicVarsConfig.getModel().setUpdateAvailableMessage(String.format("<html><center><a href=\"\">Magic Variables %s is available (Click to dismiss)</a></center></html>", latestVersion));
+                        Logger.log("INFO", String.format("Update %s is available", latestVersion));
                     }
-                    Logger.log("INFO", String.format("Update %s is available", latestVersion));
                 }
                 else {
                     Logger.log("ERROR", String.format("Error fetching updates - Could not fetch tags from %s", VERSION.RELEASE_TAGS_URL));
