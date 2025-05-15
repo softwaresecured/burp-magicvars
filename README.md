@@ -47,6 +47,19 @@ a request it will be automatically replaced with `<svg/onload=alert(26695343)>`
 application you're testing
 - Magic variables will only operate on requests that are in scope
 
+# FAQ
+#### Q: Why are replacements not happening?
+A: Check the enabled sources at the bottom of the UI and make sure the source in question is enabled
+
+#### Q: Why aren't I seeing the replacements in my proxy history?
+A: Select a request and click "Edited request"
+
+#### Q: I sent a request using the repeater but nothing changed?
+A: Check the Logging tab
+
+#### Q: The `__` sequence conflicts with syntax used in the target I'm testing, how can I fix this?
+A: Change the left and right variable markers in the bottom left of the UI
+
 # User interface
 
 The main user interface is loaded into a tab
