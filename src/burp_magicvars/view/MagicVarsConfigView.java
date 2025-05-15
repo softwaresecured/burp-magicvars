@@ -118,7 +118,6 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
                 int row = getModel().getTableRowIndexById((String)next);
                 if ( row >=0 ) {
                     jtblCustomMagicVariables.getSelectionModel().setSelectionInterval(row,row);
-                    Logger.log("DEBUG", String.format("Setting ROW TO %d", row));
                 }
                 jtxtName.setText(getModel().getCurrentVariableName());
                 jtxtDescription.setText(getModel().getCurrentVariableDescription());
