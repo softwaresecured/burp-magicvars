@@ -54,7 +54,6 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                 getModel().addMagicVarToTable(getModel().getMagicVariableByName((String)next));
                 break;
             case MagicVarsReplacementEvent.PROCESSING_ERROR:
-                Logger.log("DEBUG",(String)next);
                 break;
         }
     }
@@ -162,8 +161,7 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                     try {
                         Files.writeString(file.getAbsoluteFile().toPath(), getModel().exportVariablesAsJSON());
                     } catch (IOException e) {
-                        Logger.log("DEBUG", String.format("Exception while saving: %s", e.getMessage()));
-                        throw new RuntimeException(e);
+                        Logger.log("ERROR", String.format("Exception while saving: %s", e.getMessage()));
                     }
                 }
                 break;
@@ -268,12 +266,12 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
         String contentType = request.header("content-type") == null ? "" : request.header("content-type").value();
         if ( request.header("content-type") == null || contentType.matches("(?i).*(text|xml|json|x-www-form-urlencoded).*")) {
             if ( request.body().length() > 0 ) {
-                String preProcess = modifiedRequest.toString();
+                String preProcess = modifiedRequest.bodyToString();
                 // Statics
                 String postProcess = magicVarsReplacer.processStaticVariables(
                         getModel().getMagicVariables(),
                         preProcess,
-                        new ParameterEncoder()
+                        new ParameterEncoder(api,null,request.header("content-type"))
                 );
                 // Dynamics
                 postProcess = magicVarsReplacer.processDynamicVariables(
@@ -282,7 +280,7 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                         new ParameterEncoder()
                 );
                 if ( preProcess != postProcess ) {
-                    modifiedRequest = HttpRequest.httpRequest(modifiedRequest.httpService(),postProcess);
+                    modifiedRequest = modifiedRequest.withBody(postProcess);
                 }
             }
         }

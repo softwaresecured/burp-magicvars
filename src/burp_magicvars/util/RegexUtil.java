@@ -30,4 +30,10 @@ public class RegexUtil {
         }
         return 0;
     }
+
+    public static boolean matches(String value, String regex ) {
+        Pattern p = Pattern.compile(regex,Pattern.MULTILINE);
+        Matcher m = p.matcher(value);
+        return m.find();
+    }
 }
