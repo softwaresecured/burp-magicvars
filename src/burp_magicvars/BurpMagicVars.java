@@ -4,6 +4,9 @@ import burp.VERSION;
 import burp.api.montoya.BurpExtension;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.extension.ExtensionUnloadingHandler;
+import burp.api.montoya.http.RequestOptions;
+import burp.api.montoya.http.message.HttpRequestResponse;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import burp_magicvars.config.MontoyaConfig;
 import burp_magicvars.controller.MagicVarsConfigController;
 import burp_magicvars.enums.EditorState;
@@ -104,22 +107,10 @@ public class BurpMagicVars implements BurpExtension, ExtensionUnloadingHandler {
     class UpdateChecker implements Runnable {
         private String getLatestVersion() throws IOException, URISyntaxException {
             String latestVersion = null;
-            URL url = new URI(VERSION.RELEASE_TAGS_URL).toURL();
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setConnectTimeout(5000);
-            conn.setReadTimeout(5000);
-            if ( conn.getResponseCode() == 200 ) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String line;
-                StringBuffer content = new StringBuffer();
-                while ((line = in.readLine()) != null) {
-                    content.append(line);
-                }
-                in.close();
-                conn.disconnect();
+            HttpRequestResponse httpRequestResponse = api.http().sendRequest(HttpRequest.httpRequestFromUrl(VERSION.RELEASE_TAGS_URL), RequestOptions.requestOptions().withUpstreamTLSVerification());
+            if ( httpRequestResponse.response().statusCode() == 200 ) {
                 Pattern p = Pattern.compile("releases\\/tag\\/([^\"]+)\"");
-                Matcher m = p.matcher(content);
+                Matcher m = p.matcher(httpRequestResponse.response().bodyToString());
                 if ( m.find() ) {
                     latestVersion = m.group(1);
                 }
