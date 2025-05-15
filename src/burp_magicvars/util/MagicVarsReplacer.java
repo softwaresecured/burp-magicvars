@@ -292,7 +292,6 @@ public class MagicVarsReplacer {
                 param = emitIfChanged(prepareVariableName("TIMESTAMP"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("TIMESTAMP")), parameterEncoder.encodeParameter(getUnixTimestamp())));
             }
             if ( RegexUtil.matches(param,"(?i).*%s.*".formatted(prepareVariableName("XSS")))) {
-                Logger.log("DEBUG", String.format("Matched %s",prepareVariableName("XSS")));
                 param = emitIfChanged(prepareVariableName("XSS"),param,param.replaceAll("(?i)%s".formatted(prepareVariableName("XSS")),parameterEncoder.encodeParameter(getXSS())));
             }
             if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("XSSPG")))) {

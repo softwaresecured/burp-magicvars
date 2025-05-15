@@ -85,7 +85,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
                 importVariablesFromJSON(config.getString(ConfigKey.CUSTOM_VARIABLES));
             }
         } catch (JsonProcessingException e) {
-            Logger.log("DEBUG", String.format("Error while importing variables: %s", e.getMessage()));
+            Logger.log("ERROR", String.format("Error while importing variables: %s", e.getMessage()));
         }
     }
 
@@ -97,7 +97,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         try {
             config.setString(ConfigKey.CUSTOM_VARIABLES,exportVariablesAsJSON());
         } catch (JsonProcessingException e) {
-            Logger.log("DEBUG", String.format("Error while exporting variables: %s", e.getMessage()));
+            Logger.log("ERROR", String.format("Error while exporting variables: %s", e.getMessage()));
         }
     }
 
@@ -273,7 +273,6 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         var old = this.leftVariableMarker;
         this.leftVariableMarker = leftVariableMarker;
         emit(MagicVarsConfigModelEvent.VARIABLE_LEFT_VARIABLE_MARKER_UPDATED, old, leftVariableMarker);
-        Logger.log("DEBUG", String.format("Model emitted %s event", MagicVarsConfigModelEvent.VARIABLE_LEFT_VARIABLE_MARKER_UPDATED.toString()));
     }
 
     public String getRightVariableMarker() {
@@ -425,7 +424,6 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
     public void moveCurrentVariableUp() {
         int currentOrder = getCurrentVariableOrder();
         if ( currentOrder >= 1 ) {
-            Logger.log("DEBUG", String.format("Moving row %d to %d", currentOrder,currentOrder-1));
             customVariablesModel.moveRow(currentOrder,currentOrder,currentOrder-1);
             syncOrder();
             emit(MagicVarsConfigModelEvent.VARIABLE_ORDER_UPDATED, currentOrder, currentOrder-1);
@@ -436,7 +434,6 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
     public void moveCurrentVariableDown() {
         int currentOrder = getCurrentVariableOrder();
         if ( currentOrder < customVariablesModel.getRowCount()-1) {
-            Logger.log("DEBUG", String.format("Moving row %d to %d", currentOrder,currentOrder+1));
             customVariablesModel.moveRow(currentOrder,currentOrder,currentOrder+1);
             syncOrder();
             emit(MagicVarsConfigModelEvent.VARIABLE_ORDER_UPDATED, currentOrder, currentOrder+1);
@@ -467,7 +464,6 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         for ( MagicVariable magicVariable : magicVariables ) {
             variableOrder.append(String.format("name(%s):order(%d), ", magicVariable.name,magicVariable.order));
         }
-        Logger.log("DEBUG", String.format("ORDER = %s", variableOrder.toString()));
     }
 
     /*
@@ -514,9 +510,6 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
             setCurrentVariableReadRegex(magicVariable.readRegex == null ? "" : magicVariable.readRegex.toString());
             setCurrentVariableWriteRegex(magicVariable.writeRegex == null ? "" : magicVariable.writeRegex.toString());
             setCurrentVariableId(magicVariable.id);
-        }
-        else {
-            Logger.log("DEBUG","MAGIC VARIABLE IS NULL :(");
         }
     }
 

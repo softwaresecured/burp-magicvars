@@ -161,8 +161,7 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                     try {
                         Files.writeString(file.getAbsoluteFile().toPath(), getModel().exportVariablesAsJSON());
                     } catch (IOException e) {
-                        Logger.log("DEBUG", String.format("Exception while saving: %s", e.getMessage()));
-                        throw new RuntimeException(e);
+                        Logger.log("ERROR", String.format("Exception while saving: %s", e.getMessage()));
                     }
                 }
                 break;
