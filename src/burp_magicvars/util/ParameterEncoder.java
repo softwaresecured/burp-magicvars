@@ -5,6 +5,8 @@ import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.params.HttpParameterType;
 import com.fasterxml.jackson.core.io.JsonStringEncoder;
 
+import java.util.regex.Matcher;
+
 public class ParameterEncoder {
     private MontoyaApi api = null;
     private HttpParameterType parameterType = null;
@@ -45,10 +47,9 @@ public class ParameterEncoder {
 
         if ( contentType != null ) {
             if ( contentType.matches("(?i).*json.*")) {
-                // Yes, this is cursed. Yes, the replaceAll will interpret / characters.
-                encodedValue = new String(JsonStringEncoder.getInstance().quoteAsString(value)).replaceAll("\\\\","\\\\\\\\");
+                encodedValue = new String(JsonStringEncoder.getInstance().quoteAsString(value));
             }
         }
-        return encodedValue;
+        return Matcher.quoteReplacement(encodedValue);
     }
 }
