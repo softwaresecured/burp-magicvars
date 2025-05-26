@@ -45,7 +45,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
     private int currentVariableWriteCaptureGroup = 0;
 
     // Tool source
-    private ArrayList<String> currentVariableEnabledToolSources = new ArrayList<String>();
+    private ArrayList<String> enabledToolSources = new ArrayList<String>();
 
     private ArrayList<MagicVariable> magicVariables = new ArrayList<MagicVariable>();
     private String leftVariableMarker = null;
@@ -130,7 +130,6 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         currentVariableWriteRegex = "";
         currentVariableReadCaptureGroup = 1;
         currentVariableWriteCaptureGroup = 1;
-        currentVariableEnabledToolSources.clear();
         setCurrentVariableId(null);
     }
 
@@ -245,23 +244,23 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
     }
 
     public ArrayList<String> getEnabledToolSources() {
-        return currentVariableEnabledToolSources;
+        return enabledToolSources;
     }
 
     public void setEnabledToolSources(ArrayList<String> enabledToolSources) {
-        var old = this.currentVariableEnabledToolSources;
-        this.currentVariableEnabledToolSources = enabledToolSources;
+        var old = this.enabledToolSources;
+        this.enabledToolSources = enabledToolSources;
         emit(MagicVarsConfigModelEvent.ENABLED_SOURCES_UPDATED, old, enabledToolSources);
     }
 
     public void toggleTrafficSource(ToolType toolType, boolean enabled ) {
         if ( enabled ) {
-            if (!currentVariableEnabledToolSources.contains(toolType.toolName())) {
-                currentVariableEnabledToolSources.add(toolType.toolName());
+            if (!enabledToolSources.contains(toolType.toolName())) {
+                enabledToolSources.add(toolType.toolName());
             }
         }
         else {
-            currentVariableEnabledToolSources.remove(toolType.toolName());
+            enabledToolSources.remove(toolType.toolName());
         }
     }
 
