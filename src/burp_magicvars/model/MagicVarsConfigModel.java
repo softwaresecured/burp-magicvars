@@ -325,10 +325,17 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
 
     public void saveCurrentVariable() {
 
+        // Check name length
+        if ( currentVariableName.isEmpty() ) {
+            emit(MagicVarsConfigModelEvent.CURRENT_VARIABLE_SAVE_ERROR, null, "A variable must have a name");
+            return;
+        }
+
         // check the regexes
         if ( currentVariablePathScopeRegex.length() > 0 ) {
             if ( !RegexUtil.validateRegex(currentVariablePathScopeRegex)) {
                 emit(MagicVarsConfigModelEvent.CURRENT_VARIABLE_SAVE_ERROR, null, "Path scope regex is invalid");
+                return;
             }
         }
         if ( currentVariableReadRegex.length() > 0 ) {
