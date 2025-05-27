@@ -626,4 +626,14 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         }
     }
 
+    public String getDeDuplicatedName(String baseName) {
+        int i = 1;
+        String newName = baseName;
+        while ( getMagicVariableByName(newName) != null ) {
+            i++;
+            newName = String.format("%s_%d", baseName, i);
+        }
+        return newName;
+    }
+
 }
