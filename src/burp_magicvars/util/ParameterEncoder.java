@@ -16,6 +16,11 @@ public class ParameterEncoder {
 
     }
 
+    public ParameterEncoder( MontoyaApi api, HttpParameterType parameterType ) {
+        this.api = api;
+        this.parameterType = parameterType;
+    }
+
     public ParameterEncoder(MontoyaApi api, HttpParameterType parameterType, HttpHeader contentTypeHeader) {
         this.api = api;
         this.parameterType = parameterType;

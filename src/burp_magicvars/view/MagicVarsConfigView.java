@@ -104,6 +104,7 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
             case EDITOR_STATE_CHANGED:
                 updateEditorButtonsState((EditorState)next);
                 updateInputsState(getModel().getEditorState(),getModel().getCurrentVariableMagicVariableType());
+                jtxtName.setText(getModel().getCurrentVariableName());
                 break;
             case CURRENT_VARIABLE_SAVE_ERROR:
                 JOptionPane.showMessageDialog(parentComponent, (String)next,"Error saving Magic Variable",JOptionPane.ERROR_MESSAGE);

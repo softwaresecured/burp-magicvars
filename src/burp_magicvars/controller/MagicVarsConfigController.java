@@ -65,6 +65,7 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                 getModel().setLastVariableId(getModel().getCurrentVariableId());
                 getModel().clearCurrentVariable();
                 getModel().setCurrentVariableMagicVariableType(MagicVariableType.STATIC);
+                getModel().setCurrentVariableName(getModel().getDeDuplicatedName("Untitled"));
                 getModel().setEditorState(EditorState.CREATE);
                 break;
             case MagicVarsConfigControllerEvent.SAVE:
@@ -72,7 +73,13 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                 getModel().setEditorState(EditorState.EDIT);
                 break;
             case MagicVarsConfigControllerEvent.CANCEL:
-                getModel().editMagicVariableById(getModel().getLastVariableId());
+                if (getModel().getLastVariableId() != null && getModel().getVariableById(getModel().getLastVariableId()) != null) {
+                    getModel().editMagicVariableById(getModel().getLastVariableId());
+                    getModel().setEditorState(EditorState.EDIT);
+                }
+                else {
+                    getModel().setEditorState(EditorState.INITIAL);
+                }
                 break;
             case MagicVarsConfigControllerEvent.DELETE:
                 getModel().removeVariable(getModel().getCurrentVariableId());
@@ -284,6 +291,16 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                 }
             }
         }
+        /*
+            Statics - path parameters
+         */
+        modifiedRequest = modifiedRequest.withPath(
+                magicVarsReplacer.processStaticVariables(
+                        getModel().getMagicVariables(),
+                        modifiedRequest.path(),
+                        new ParameterEncoder(api, HttpParameterType.URL)
+                )
+        );
 
         return modifiedRequest;
     }

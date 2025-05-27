@@ -45,7 +45,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
     private int currentVariableWriteCaptureGroup = 0;
 
     // Tool source
-    private ArrayList<String> currentVariableEnabledToolSources = new ArrayList<String>();
+    private ArrayList<String> enabledToolSources = new ArrayList<String>();
 
     private ArrayList<MagicVariable> magicVariables = new ArrayList<MagicVariable>();
     private String leftVariableMarker = null;
@@ -130,7 +130,6 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         currentVariableWriteRegex = "";
         currentVariableReadCaptureGroup = 1;
         currentVariableWriteCaptureGroup = 1;
-        currentVariableEnabledToolSources.clear();
         setCurrentVariableId(null);
     }
 
@@ -245,23 +244,23 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
     }
 
     public ArrayList<String> getEnabledToolSources() {
-        return currentVariableEnabledToolSources;
+        return enabledToolSources;
     }
 
     public void setEnabledToolSources(ArrayList<String> enabledToolSources) {
-        var old = this.currentVariableEnabledToolSources;
-        this.currentVariableEnabledToolSources = enabledToolSources;
+        var old = this.enabledToolSources;
+        this.enabledToolSources = enabledToolSources;
         emit(MagicVarsConfigModelEvent.ENABLED_SOURCES_UPDATED, old, enabledToolSources);
     }
 
     public void toggleTrafficSource(ToolType toolType, boolean enabled ) {
         if ( enabled ) {
-            if (!currentVariableEnabledToolSources.contains(toolType.toolName())) {
-                currentVariableEnabledToolSources.add(toolType.toolName());
+            if (!enabledToolSources.contains(toolType.toolName())) {
+                enabledToolSources.add(toolType.toolName());
             }
         }
         else {
-            currentVariableEnabledToolSources.remove(toolType.toolName());
+            enabledToolSources.remove(toolType.toolName());
         }
     }
 
@@ -305,10 +304,20 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         emit(MagicVarsConfigModelEvent.EDITOR_STATE_CHANGED, old, editorState);
     }
 
-    private boolean nameIsUnique(String name ) {
+    private boolean nameIsUnique(String name, String id ) {
         for ( MagicVariable magicVariable : magicVariables ) {
-            if ( magicVariable.name.equalsIgnoreCase(name)) {
-                return false;
+            if ( id == null ) {
+                if ( magicVariable.name.equalsIgnoreCase(name)) {
+                    return false;
+                }
+            }
+            else {
+                if ( magicVariable.name.equalsIgnoreCase(name)) {
+                    if ( id.equals(magicVariable.id)) {
+                        return true;
+                    }
+                    return false;
+                }
             }
         }
         return true;
@@ -326,10 +335,17 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
 
     public void saveCurrentVariable() {
 
+        // Check name length
+        if ( currentVariableName.isEmpty() ) {
+            emit(MagicVarsConfigModelEvent.CURRENT_VARIABLE_SAVE_ERROR, null, "A variable must have a name");
+            return;
+        }
+
         // check the regexes
         if ( currentVariablePathScopeRegex.length() > 0 ) {
             if ( !RegexUtil.validateRegex(currentVariablePathScopeRegex)) {
                 emit(MagicVarsConfigModelEvent.CURRENT_VARIABLE_SAVE_ERROR, null, "Path scope regex is invalid");
+                return;
             }
         }
         if ( currentVariableReadRegex.length() > 0 ) {
@@ -358,6 +374,10 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         if ( currentVariableId != null ) {
             MagicVariable currentVariable = getVariableById(currentVariableId);
             if ( currentVariable != null ) {
+                if (!nameIsUnique(currentVariableName,currentVariableId)) {
+                    emit(MagicVarsConfigModelEvent.CURRENT_VARIABLE_SAVE_ERROR, null, String.format("A variable named %s already exists", currentVariableName));
+                    return;
+                }
                 currentVariable.name = currentVariableName;
                 currentVariable.description = currentVariableDescription;
                 currentVariable.magicVariableType = currentVariableMagicVariableType;
@@ -377,7 +397,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         }
         // Adding
         else {
-            if (!nameIsUnique(currentVariableName)) {
+            if (!nameIsUnique(currentVariableName,null)) {
                 emit(MagicVarsConfigModelEvent.CURRENT_VARIABLE_SAVE_ERROR, null, String.format("A variable named %s already exists", currentVariableName));
                 return;
             }
@@ -604,6 +624,16 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
                 }
             }
         }
+    }
+
+    public String getDeDuplicatedName(String baseName) {
+        int i = 1;
+        String newName = baseName;
+        while ( getMagicVariableByName(newName) != null ) {
+            i++;
+            newName = String.format("%s_%d", baseName, i);
+        }
+        return newName;
     }
 
 }
