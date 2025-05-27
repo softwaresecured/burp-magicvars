@@ -284,6 +284,16 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                 }
             }
         }
+        /*
+            Statics - path parameters
+         */
+        modifiedRequest = modifiedRequest.withPath(
+                magicVarsReplacer.processStaticVariables(
+                        getModel().getMagicVariables(),
+                        modifiedRequest.path(),
+                        new ParameterEncoder(api, HttpParameterType.URL)
+                )
+        );
 
         return modifiedRequest;
     }
