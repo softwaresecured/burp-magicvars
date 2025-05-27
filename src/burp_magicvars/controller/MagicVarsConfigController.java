@@ -65,6 +65,7 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                 getModel().setLastVariableId(getModel().getCurrentVariableId());
                 getModel().clearCurrentVariable();
                 getModel().setCurrentVariableMagicVariableType(MagicVariableType.STATIC);
+                getModel().setCurrentVariableName(getModel().getDeDuplicatedName("Untitled"));
                 getModel().setEditorState(EditorState.CREATE);
                 break;
             case MagicVarsConfigControllerEvent.SAVE:
