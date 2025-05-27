@@ -304,10 +304,20 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         emit(MagicVarsConfigModelEvent.EDITOR_STATE_CHANGED, old, editorState);
     }
 
-    private boolean nameIsUnique(String name ) {
+    private boolean nameIsUnique(String name, String id ) {
         for ( MagicVariable magicVariable : magicVariables ) {
-            if ( magicVariable.name.equalsIgnoreCase(name)) {
-                return false;
+            if ( id == null ) {
+                if ( magicVariable.name.equalsIgnoreCase(name)) {
+                    return false;
+                }
+            }
+            else {
+                if ( magicVariable.name.equalsIgnoreCase(name)) {
+                    if ( id.equals(magicVariable.id)) {
+                        return true;
+                    }
+                    return false;
+                }
             }
         }
         return true;
@@ -364,6 +374,10 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         if ( currentVariableId != null ) {
             MagicVariable currentVariable = getVariableById(currentVariableId);
             if ( currentVariable != null ) {
+                if (!nameIsUnique(currentVariableName,currentVariableId)) {
+                    emit(MagicVarsConfigModelEvent.CURRENT_VARIABLE_SAVE_ERROR, null, String.format("A variable named %s already exists", currentVariableName));
+                    return;
+                }
                 currentVariable.name = currentVariableName;
                 currentVariable.description = currentVariableDescription;
                 currentVariable.magicVariableType = currentVariableMagicVariableType;
@@ -383,7 +397,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         }
         // Adding
         else {
-            if (!nameIsUnique(currentVariableName)) {
+            if (!nameIsUnique(currentVariableName,null)) {
                 emit(MagicVarsConfigModelEvent.CURRENT_VARIABLE_SAVE_ERROR, null, String.format("A variable named %s already exists", currentVariableName));
                 return;
             }
