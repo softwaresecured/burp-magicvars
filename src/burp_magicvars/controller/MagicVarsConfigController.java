@@ -72,7 +72,13 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                 getModel().setEditorState(EditorState.EDIT);
                 break;
             case MagicVarsConfigControllerEvent.CANCEL:
-                getModel().editMagicVariableById(getModel().getLastVariableId());
+                if (getModel().getLastVariableId() != null && getModel().getVariableById(getModel().getLastVariableId()) != null) {
+                    getModel().editMagicVariableById(getModel().getLastVariableId());
+                    getModel().setEditorState(EditorState.EDIT);
+                }
+                else {
+                    getModel().setEditorState(EditorState.INITIAL);
+                }
                 break;
             case MagicVarsConfigControllerEvent.DELETE:
                 getModel().removeVariable(getModel().getCurrentVariableId());
