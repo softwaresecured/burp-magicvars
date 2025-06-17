@@ -87,6 +87,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         } catch (JsonProcessingException e) {
             Logger.log("ERROR", String.format("Error while importing variables: %s", e.getMessage()));
         }
+        emit(MagicVarsConfigModelEvent.CONFIG_LOADED, null,null);
     }
 
     @Override

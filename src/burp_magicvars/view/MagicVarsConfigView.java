@@ -101,6 +101,10 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
     @Override
     protected void handleEvent(MagicVarsConfigModelEvent event, Object previous, Object next) {
         switch ( event ) {
+            case CONFIG_LOADED:
+                jtxtLeftVariableMarker.setText(getModel().getLeftVariableMarker());
+                jtxtRightVariableMarker.setText(getModel().getRightVariableMarker());
+                break;
             case EDITOR_STATE_CHANGED:
                 updateEditorButtonsState((EditorState)next);
                 updateInputsState(getModel().getEditorState(),getModel().getCurrentVariableMagicVariableType());
@@ -108,12 +112,6 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
                 break;
             case CURRENT_VARIABLE_SAVE_ERROR:
                 JOptionPane.showMessageDialog(parentComponent, (String)next,"Error saving Magic Variable",JOptionPane.ERROR_MESSAGE);
-                break;
-            case VARIABLE_LEFT_VARIABLE_MARKER_UPDATED:
-                jtxtLeftVariableMarker.setText((String)next);
-                break;
-            case VARIABLE_RIGHT_VARIABLE_MARKER_UPDATED:
-                jtxtRightVariableMarker.setText((String)next);
                 break;
             case CURRENT_VARIABLE_ID_UPDATED:
                 int row = getModel().getTableRowIndexById((String)next);
