@@ -30,6 +30,7 @@ public class ParameterEncoder {
     }
 
     public String encodeParameter(String value ) {
+        long startTime = System.currentTimeMillis();
         String encodedValue = value;
         if ( parameterType != null ) {
             switch ( parameterType ) {
@@ -55,6 +56,7 @@ public class ParameterEncoder {
                 encodedValue = new String(JsonStringEncoder.getInstance().quoteAsString(value));
             }
         }
+        Logger.perf(startTime,"Encode parameter");
         return Matcher.quoteReplacement(encodedValue);
     }
 }
