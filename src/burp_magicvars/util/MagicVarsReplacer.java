@@ -152,10 +152,14 @@ public class MagicVarsReplacer {
     }
 
     private String prepareVariableName( String variableName ) {
-        return String.format("%s%s%s", getLeftVariableMarker(),variableName,getRightVariableMarker());
+        long startTime = System.currentTimeMillis();
+        String variableNameUpdated = String.format("%s%s%s", getLeftVariableMarker(),variableName,getRightVariableMarker());
+        Logger.perf(startTime,"prepareVariableName");
+        return variableNameUpdated;
     }
 
     public String processDynamicVariables(ArrayList<MagicVariable> customMagicVariables, String data, ParameterEncoder parameterEncoder ) {
+        long startTime = System.currentTimeMillis();
         if ( customMagicVariables != null ) {
             for ( MagicVariable magicVariable : customMagicVariables ) {
                 if ( magicVariable.magicVariableType.equals(MagicVariableType.DYNAMIC)) {
@@ -219,10 +223,13 @@ public class MagicVarsReplacer {
                 }
             }
         }
+        Logger.perf(startTime,"processDynamicVariables - full");
         return data;
     }
 
     public String processStaticVariables(ArrayList<MagicVariable> customMagicVariables, String param, ParameterEncoder parameterEncoder ) {
+        long totalStartTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         if ( param != null ) {
             // Process custom
             if ( customMagicVariables != null ) {
@@ -240,11 +247,13 @@ public class MagicVarsReplacer {
                     }
                 }
             }
+            Logger.perf(startTime,"processStaticVariables - custom");
+            startTime = System.currentTimeMillis();
             // Process regex based builtin
 
             // REPEATSTR
 
-            Pattern repeatStrPattern = Pattern.compile(String.format(".*%sREPEATSTR__(\\w+)__(\\d+)%s",getLeftVariableMarker(),getRightVariableMarker()));
+            Pattern repeatStrPattern = Pattern.compile(String.format("%sREPEATSTR__(\\w+)__(\\d+)%s",getLeftVariableMarker(),getRightVariableMarker()));
             Matcher repeatStrMatcher = repeatStrPattern.matcher(param);
             if ( repeatStrMatcher.find() && repeatStrMatcher.groupCount() == 2) {
                 String repeatStr = repeatStrMatcher.group(1);
@@ -255,6 +264,9 @@ public class MagicVarsReplacer {
                     emit(MagicVarsReplacementEvent.REPLACEMENT_MADE, null, "REPEATSTR_CHR_COUNT");
                 }
             }
+
+            Logger.perf(startTime,"processStaticVariables - regex based built in REPEATSTR");
+            startTime = System.currentTimeMillis();
 
             // Process builtin
             if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("RINT")))) {
@@ -291,15 +303,17 @@ public class MagicVarsReplacer {
             if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("TIMESTAMP")))) {
                 param = emitIfChanged(prepareVariableName("TIMESTAMP"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("TIMESTAMP")), parameterEncoder.encodeParameter(getUnixTimestamp())));
             }
-            if ( RegexUtil.matches(param,"(?i).*%s.*".formatted(prepareVariableName("XSS")))) {
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("XSS")))) {
                 param = emitIfChanged(prepareVariableName("XSS"),param,param.replaceAll("(?i)%s".formatted(prepareVariableName("XSS")),parameterEncoder.encodeParameter(getXSS())));
             }
             if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("XSSPG")))) {
                 param = emitIfChanged(prepareVariableName("XSSPG"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("XSSPG")), parameterEncoder.encodeParameter(getXSSPG())));
             }
-            if ( RegexUtil.matches(param,"(?i).*%s.*".formatted(prepareVariableName("SSTI")))) {
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("SSTI")))) {
                 param = emitIfChanged(prepareVariableName("SSTI"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("SSTI")), parameterEncoder.encodeParameter(getSSTI())));
             }
+            Logger.perf(startTime,"processStaticVariables - built in");
+            startTime = System.currentTimeMillis();
             // Regex based
             if ( RegexUtil.matches(param,"(?i)55\\d{4}66")) {
                 param = emitIfChanged(prepareVariableName("NERINT"), param, param.replaceAll("(?i)55\\d{4}66", parameterEncoder.encodeParameter(getNeRint())));
@@ -310,7 +324,8 @@ public class MagicVarsReplacer {
             if ( RegexUtil.matches(param,"(?i)(?i)XX[a-z]{4}YY")) {
                 param = emitIfChanged(prepareVariableName("NERANDSTR"), param, param.replaceAll("(?i)(?i)XX[a-z]{4}YY", parameterEncoder.encodeParameter(getNeRandStr())));
             }
-
+            Logger.perf(startTime,"processStaticVariables - regex based built in");
+            startTime = System.currentTimeMillis();
             if ( collaborator != null ) {
                 if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("JSOOB")))) {
                     param = emitIfChanged(prepareVariableName("JSOOB"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("JSOOB")), parameterEncoder.encodeParameter(getJSOOB())));
@@ -325,8 +340,9 @@ public class MagicVarsReplacer {
                     param = emitIfChanged(prepareVariableName("OOB"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("OOB")), parameterEncoder.encodeParameter(collaborator.defaultPayloadGenerator().generatePayload().toString())));
                 }
             }
+            Logger.perf(startTime,"processStaticVariables - collaborator dependant");
         }
-
+        Logger.perf(totalStartTime,"processStaticVariables - full");
         return param;
     }
 
