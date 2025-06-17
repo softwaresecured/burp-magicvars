@@ -32,8 +32,11 @@ public class RegexUtil {
     }
 
     public static boolean matches(String value, String regex ) {
+        long startTime = System.currentTimeMillis();
         Pattern p = Pattern.compile(regex,Pattern.MULTILINE);
         Matcher m = p.matcher(value);
-        return m.find();
+        boolean matched = m.find();
+        Logger.perf(startTime, String.format("Regex %s ( %s )", regex, matched ? "matched" : "not matched"));
+        return matched;
     }
 }
