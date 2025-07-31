@@ -194,7 +194,6 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
     }
 
     private void updateInputsState(EditorState editorState, MagicVariableType magicVariableType ) {
-
         jtxtName.setEnabled(editorState == EditorState.INITIAL ? false : true);
         jcmbType.setEnabled(editorState == EditorState.INITIAL ? false : true);
         jtxtDescription.setEnabled(editorState == EditorState.INITIAL ? false : true);
