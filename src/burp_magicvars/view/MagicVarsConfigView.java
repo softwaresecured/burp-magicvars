@@ -52,7 +52,11 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
 
     public MagicVarsConfigView(MagicVarsConfigModel model) {
         super(model);
-        jtblCustomMagicVariables = new JTable(getModel().getCustomVariablesModel());
+        jtblCustomMagicVariables = new JTable(getModel().getCustomVariablesModel()){
+            public boolean isCellEditable(int row, int column) {
+                return column == 1;
+            };
+        };
     }
 
     @Override
