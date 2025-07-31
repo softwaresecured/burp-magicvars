@@ -4,6 +4,8 @@ import burp_magicvars.view.MagicVarsConfigView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 public class MagicVarsTab extends JPanel {
     private MagicVarsConfigView magicVarsConfigView;
@@ -15,340 +17,106 @@ public class MagicVarsTab extends JPanel {
     }
 
     private void initLayout() {
-
         // Current variable common settings & buttons
-        JPanel pnlVariableCommonSettings = new JPanel();
-        pnlVariableCommonSettings.setLayout(new GridBagLayout());
-        int idx = 0;
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(new JLabel("Name"),gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(magicVarsConfigView.jtxtName,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(new JLabel("Type"),gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(magicVarsConfigView.jcmbType,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(new JLabel("Value"),gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(magicVarsConfigView.jtxtInitialValue,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(new JLabel("Path scope"),gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(magicVarsConfigView.jtxtPathScope,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(new JLabel("Description"),gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1;
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(magicVarsConfigView.jtxtDescription,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,5,0,0);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(magicVarsConfigView.jchkEnabled,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,5,0,0);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(magicVarsConfigView.jbtnNew,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,5,0,0);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(magicVarsConfigView.jbtnSave,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,5,0,0);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(magicVarsConfigView.jbtnCancel,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,5,0,0);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(magicVarsConfigView.jbtnDelete,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,5,0,0);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(magicVarsConfigView.jbtnMoveUp,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,5,0,0);
-        gbc.gridx = idx;
-        gbc.gridy = 0;
-        pnlVariableCommonSettings.add(magicVarsConfigView.jbtnMoveDown,gbc);
+        JPanel pnlVariableCommonSettings = new JPanel(new WrapLayout(FlowLayout.LEFT));
+        pnlVariableCommonSettings.add(new JLabel("Name"));
+        pnlVariableCommonSettings.add(magicVarsConfigView.jtxtName);
+        pnlVariableCommonSettings.add(new JLabel("Type"));
+        pnlVariableCommonSettings.add(magicVarsConfigView.jcmbType);
+        pnlVariableCommonSettings.add(new JLabel("Value"));
+        pnlVariableCommonSettings.add(magicVarsConfigView.jtxtInitialValue);
+        pnlVariableCommonSettings.add(new JLabel("Path scope"));
+        pnlVariableCommonSettings.add(magicVarsConfigView.jtxtPathScope);
+        pnlVariableCommonSettings.add(new JLabel("Description"));
+        pnlVariableCommonSettings.add(magicVarsConfigView.jtxtDescription);
+        pnlVariableCommonSettings.add(magicVarsConfigView.jchkEnabled);
+        pnlVariableCommonSettings.add(magicVarsConfigView.jbtnNew);
+        pnlVariableCommonSettings.add(magicVarsConfigView.jbtnSave);
+        pnlVariableCommonSettings.add(magicVarsConfigView.jbtnCancel);
+        pnlVariableCommonSettings.add(magicVarsConfigView.jbtnDelete);
+        pnlVariableCommonSettings.add(magicVarsConfigView.jbtnMoveUp);
+        pnlVariableCommonSettings.add(magicVarsConfigView.jbtnMoveDown);
+        pnlVariableCommonSettings.add(Box.createHorizontalGlue());
 
         // Dynamic config options
-        JPanel pnlVariableDynamicSettings = new JPanel();
-        pnlVariableDynamicSettings.setLayout(new GridBagLayout());
-        idx = 0;
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableDynamicSettings.add(new JLabel("Read regex"),gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableDynamicSettings.add(magicVarsConfigView.jtxtReadRegex,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableDynamicSettings.add(new JLabel("Capture group"),gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableDynamicSettings.add(magicVarsConfigView.jspnReadRegexCaptureGroup,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableDynamicSettings.add(new JLabel("Write regex"),gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableDynamicSettings.add(magicVarsConfigView.jtxtWriteRegex,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlVariableDynamicSettings.add(new JLabel("Capture group"),gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx;
-        gbc.gridy = 0;
-        pnlVariableDynamicSettings.add(magicVarsConfigView.jspnWriteRegexCaptureGroup,gbc);
+        JPanel pnlVariableDynamicSettings = new JPanel(new WrapLayout(FlowLayout.LEFT));
+        pnlVariableDynamicSettings.add(new JLabel("Read regex"));
+        pnlVariableDynamicSettings.add(magicVarsConfigView.jtxtReadRegex);
+        pnlVariableDynamicSettings.add(new JLabel("Capture group"));
+        pnlVariableDynamicSettings.add(magicVarsConfigView.jspnReadRegexCaptureGroup);
+        pnlVariableDynamicSettings.add(new JLabel("Write regex"));
+        pnlVariableDynamicSettings.add(magicVarsConfigView.jtxtWriteRegex);
+        pnlVariableDynamicSettings.add(new JLabel("Capture group"));
+        pnlVariableDynamicSettings.add(magicVarsConfigView.jspnWriteRegexCaptureGroup);
+        pnlVariableCommonSettings.add(Box.createHorizontalGlue());
 
         // Current variable settings container
         JPanel pnlVariableConfig = new JPanel();
-        pnlVariableConfig.setLayout(new GridBagLayout());
+        pnlVariableConfig.setLayout(new BorderLayout());
         pnlVariableConfig.setBorder(BorderFactory.createTitledBorder("Variable configuration"));
+        pnlVariableConfig.add(pnlVariableCommonSettings,BorderLayout.NORTH);
+        pnlVariableConfig.add(pnlVariableDynamicSettings,BorderLayout.SOUTH);
 
-        int idy = 0;
-        gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.ipady = 5;
-        gbc.weightx = 1;
-        gbc.gridx = 0;
-        gbc.gridy = idy++;
-        pnlVariableConfig.add(pnlVariableCommonSettings,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.ipady = 5;
-        gbc.weightx = 1;
-        gbc.gridx = 0;
-        gbc.gridy = idy++;
-        pnlVariableConfig.add(pnlVariableDynamicSettings,gbc);
 
         // Variables list
         JScrollPane jscrollVariables = new JScrollPane(magicVarsConfigView.jtblCustomMagicVariables);
         jscrollVariables.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         jscrollVariables.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         magicVarsConfigView.jtblCustomMagicVariables.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        JPanel pnlVariableList = new JPanel();
-        pnlVariableList.setLayout(new GridBagLayout());
-        pnlVariableList.setBorder(BorderFactory.createTitledBorder("Current variables"));
 
-        gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1;
-        gbc.weighty = 1;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        pnlVariableList.add(jscrollVariables,gbc);
+        JPanel pnlCurrentVariables = new JPanel();
+        pnlCurrentVariables.setLayout(new BorderLayout());
+        pnlCurrentVariables.setBorder(BorderFactory.createTitledBorder("Current variables"));
+        pnlCurrentVariables.add(jscrollVariables,BorderLayout.CENTER);
 
-        // Enabled sources
-        JPanel pnlEnabledSourcesSettings = new JPanel();
-        pnlEnabledSourcesSettings.setLayout(new GridBagLayout());
-        idx = 0;
 
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlEnabledSourcesSettings.add(magicVarsConfigView.jchkToolSourceProxy,gbc);
 
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlEnabledSourcesSettings.add(magicVarsConfigView.jchkToolSourceProxy,gbc);
 
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlEnabledSourcesSettings.add(magicVarsConfigView.jchkToolSourceRepeater,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlEnabledSourcesSettings.add(magicVarsConfigView.jchkToolSourceExtensions,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlEnabledSourcesSettings.add(magicVarsConfigView.jchkToolSourceIntruder,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlEnabledSourcesSettings.add(magicVarsConfigView.jchkToolSourceScanner,gbc);
-
-        idx = 0;
         // General settings ( at the bottom )
-        JPanel pnlGeneralSettings = new JPanel();
-        pnlGeneralSettings.setLayout(new GridBagLayout());
+        JPanel pnlGeneralSettings = new JPanel(new WrapLayout(FlowLayout.LEFT)) ;
+        pnlGeneralSettings.add(new JLabel("Enabled sources"));
+        pnlGeneralSettings.add(magicVarsConfigView.jchkToolSourceProxy);
+        pnlGeneralSettings.add(magicVarsConfigView.jchkToolSourceProxy);
+        pnlGeneralSettings.add(magicVarsConfigView.jchkToolSourceRepeater);
+        pnlGeneralSettings.add(magicVarsConfigView.jchkToolSourceExtensions);
+        pnlGeneralSettings.add(magicVarsConfigView.jchkToolSourceIntruder);
+        pnlGeneralSettings.add(magicVarsConfigView.jchkToolSourceScanner);
+        pnlGeneralSettings.add(new JLabel("Left variable marker"));
+        pnlGeneralSettings.add(magicVarsConfigView.jtxtLeftVariableMarker);
+        pnlGeneralSettings.add(new JLabel("Right variable marker"));
+        pnlGeneralSettings.add(magicVarsConfigView.jtxtRightVariableMarker);
+        pnlGeneralSettings.add(magicVarsConfigView.jbtnImportVariables);
+        pnlGeneralSettings.add(magicVarsConfigView.jbtnExportVariables);
 
-        gbc = new GridBagConstraints();
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlGeneralSettings.add(new JLabel("Enabled sources"),gbc);
+        setLayout(new BorderLayout());
+        add(pnlVariableConfig,BorderLayout.NORTH);
+        add(pnlCurrentVariables,BorderLayout.CENTER);
+        add(pnlGeneralSettings,BorderLayout.SOUTH);
 
-        gbc = new GridBagConstraints();
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlGeneralSettings.add(pnlEnabledSourcesSettings,gbc);
+        addComponentListener(new ComponentListener() {
+            @Override
+            public void componentResized(ComponentEvent componentEvent) {
+                for ( Component component : new Component[]{pnlVariableConfig,pnlCurrentVariables,pnlGeneralSettings}) {
+                    component.revalidate();
+                }
+            }
 
-        gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1;
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlGeneralSettings.add(new JPanel(),gbc);
+            @Override
+            public void componentMoved(ComponentEvent componentEvent) {
 
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlGeneralSettings.add(new JLabel("Left variable marker"),gbc);
+            }
 
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlGeneralSettings.add(magicVarsConfigView.jtxtLeftVariableMarker,gbc);
+            @Override
+            public void componentShown(ComponentEvent componentEvent) {
 
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlGeneralSettings.add(new JLabel("Right variable marker"),gbc);
+            }
 
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlGeneralSettings.add(magicVarsConfigView.jtxtRightVariableMarker,gbc);
+            @Override
+            public void componentHidden(ComponentEvent componentEvent) {
 
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlGeneralSettings.add(magicVarsConfigView.jbtnImportVariables,gbc);
+            }
+        });
 
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(0,2,0,2);
-        gbc.gridx = idx++;
-        gbc.gridy = 0;
-        pnlGeneralSettings.add(magicVarsConfigView.jbtnExportVariables,gbc);
-
-
-        // Main layout
-        setLayout(new GridBagLayout());
-        gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        add(pnlVariableConfig,gbc);
-
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = 1;
-        gbc.weighty = 1;
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.ipady = 5;
-        add(pnlVariableList,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1;
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.ipady = 5;
-        add(pnlGeneralSettings,gbc);
-
-        gbc = new GridBagConstraints();
-        gbc.insets = new Insets(2,0,2,0);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1;
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        add(magicVarsConfigView.jtxtUpdateAvailableMessage,gbc);
     }
 
     public void initToolTips() {
