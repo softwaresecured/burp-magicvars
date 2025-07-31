@@ -10,6 +10,7 @@ public class MagicVarsTab extends JPanel {
     public MagicVarsTab(MagicVarsConfigView magicVarsConfigView) {
         this.magicVarsConfigView = magicVarsConfigView;
         initComponents();
+        initToolTips();
         initLayout();
     }
 
@@ -348,6 +349,34 @@ public class MagicVarsTab extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 3;
         add(magicVarsConfigView.jtxtUpdateAvailableMessage,gbc);
+    }
+
+    public void initToolTips() {
+        magicVarsConfigView.jchkEnabled.setToolTipText("If the variable is enabled it will be included in requests otherwise it will be skipped when processing.");
+        magicVarsConfigView.jtxtName.setToolTipText("The name of the variable. Must be unique.");
+        magicVarsConfigView.jcmbType.setToolTipText("Variables can be static or dynamc. Static variables remain the same and dynamic variables can change over time.");
+        magicVarsConfigView.jtxtPathScope.setToolTipText("The regex used to match the path of the current request. If it does not match, the variable will not be applied to the request.");
+        magicVarsConfigView.jtxtReadRegex.setToolTipText("The regex used to read the value from the traffic. This regex should have one capture group identifying where the value is to be read from.");
+        magicVarsConfigView.jtxtWriteRegex.setToolTipText("");
+        magicVarsConfigView.jtxtLeftVariableMarker.setToolTipText("Variables are enclosed with one or more characters on either side. Pick a variable marker that does not collide with whatever you're testing. Avoid character sequences used in common templating languages.");
+        magicVarsConfigView.jtxtRightVariableMarker.setToolTipText("Variables are enclosed with one or more characters on either side. Pick a variable marker that does not collide with whatever you're testing. Avoid character sequences used in common templating languages.");
+        magicVarsConfigView.jspnReadRegexCaptureGroup.setToolTipText("The capture group for the regex expression.");
+        magicVarsConfigView.jspnWriteRegexCaptureGroup.setToolTipText("The capture group for the regex expression.");
+        magicVarsConfigView.jtxtInitialValue.setToolTipText("The initial value of the variable. For dynamic variables this value will update and for static variables this value will remain the same.");
+        magicVarsConfigView.jtxtDescription.setToolTipText("A brief description of the variable.");
+        magicVarsConfigView.jbtnMoveUp.setToolTipText("Move the variable up. Variables are processed in the order that they appear in this table.");
+        magicVarsConfigView.jbtnMoveDown.setToolTipText("Move the variable down. Variables are processed in the order that they appear in this table.");
+        magicVarsConfigView.jbtnNew.setToolTipText("Create a new variable.");
+        magicVarsConfigView.jbtnSave.setToolTipText("Save the current variable.");
+        magicVarsConfigView.jbtnCancel.setToolTipText("Cancel editing the current variable.");
+        magicVarsConfigView.jbtnDelete.setToolTipText("Delete the current variable.");
+        magicVarsConfigView.jbtnImportVariables.setToolTipText("Import variables from a JSON file.");
+        magicVarsConfigView.jbtnExportVariables.setToolTipText("Export variables to a JSON file.");
+        magicVarsConfigView.jchkToolSourceProxy.setToolTipText("Apply replacements to requests originating from the proxy.");
+        magicVarsConfigView.jchkToolSourceRepeater.setToolTipText("Apply replacements to requests originating from the repeater.");
+        magicVarsConfigView.jchkToolSourceIntruder.setToolTipText("Apply replacements to requests originating from the intruder.");
+        magicVarsConfigView.jchkToolSourceExtensions.setToolTipText("Apply replacements to requests originating from extensions.");
+        magicVarsConfigView.jchkToolSourceScanner.setToolTipText("Apply replacements to requests originating from the scanner.");
     }
 
     private void initComponents() {
