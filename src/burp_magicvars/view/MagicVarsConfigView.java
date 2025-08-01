@@ -6,7 +6,6 @@ import burp_magicvars.event.MagicVarsConfigControllerEvent;
 import burp_magicvars.event.MagicVarsConfigModelEvent;
 import burp_magicvars.model.MagicVarsConfigModel;
 import burp_magicvars.mvc.AbstractView;
-import burp_magicvars.util.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -188,6 +187,7 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
                 else {
                     jtxtUpdateAvailableMessage.setVisible(false);
                 }
+                break;
         }
     }
 
