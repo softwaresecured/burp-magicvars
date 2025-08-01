@@ -87,6 +87,7 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
 
         attachSelection(jtblCustomMagicVariables,MagicVarsConfigControllerEvent.ROW_SELECTION_UPDATE);
         attachTableModelChangeListener(jtblCustomMagicVariables.getModel(),MagicVarsConfigControllerEvent.VARIABLES_TABLE_MODEL_CHANGED);
+        attachTableEnableToggleListener(jtblCustomMagicVariables,MagicVarsConfigControllerEvent.VARIABLES_TABLE_ENABLED_TOGGLED_CHANGED);
 
         attach(jtxtPathScope, MagicVarsConfigControllerEvent.UPDATE_PATH_SCOPE);
         checkRegex(jtxtPathScope);
@@ -108,6 +109,9 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
             case CONFIG_LOADED:
                 jtxtLeftVariableMarker.setText(getModel().getLeftVariableMarker());
                 jtxtRightVariableMarker.setText(getModel().getRightVariableMarker());
+                break;
+            case CURRENT_VARIABLE_ENABLED_TOGGLE:
+                jchkEnabled.setSelected((boolean)next);
                 break;
             case EDITOR_STATE_CHANGED:
                 updateEditorButtonsState((EditorState)next);
