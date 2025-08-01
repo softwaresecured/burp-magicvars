@@ -137,8 +137,8 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
                 jspnReadRegexCaptureGroup.setValue(getModel().getCurrentVariableReadCaptureGroup());
                 jspnWriteRegexCaptureGroup.setValue(getModel().getCurrentVariableWriteCaptureGroup());
 
-                updateInputsState(getModel().getEditorState(),getModel().getCurrentVariableMagicVariableType());
                 updateDynamicVariableInputsState(getModel().getCurrentVariableMagicVariableType());
+                updateInputsState(getModel().getEditorState(),getModel().getCurrentVariableMagicVariableType());
                 break;
 
             case CURRENT_VARIABLE_TYPE_UPDATED:
@@ -164,6 +164,9 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
                 }
                 if ( currentIndex >= 0 && jtblCustomMagicVariables.getRowCount() > 0 ) {
                     jtblCustomMagicVariables.getSelectionModel().setSelectionInterval(currentIndex,currentIndex);
+                }
+                if ( getModel().getMagicVariables().isEmpty() ) {
+                    getModel().setEditorState(EditorState.INITIAL);
                 }
                 break;
 
@@ -234,10 +237,12 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
     }
 
     private void updateDynamicVariableInputsState( MagicVariableType magicVariableType ) {
-        jtxtReadRegex.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
-        jspnReadRegexCaptureGroup.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
-        jtxtWriteRegex.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
-        jspnWriteRegexCaptureGroup.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
+        if ( magicVariableType != null ) {
+            jtxtReadRegex.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
+            jspnReadRegexCaptureGroup.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
+            jtxtWriteRegex.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
+            jspnWriteRegexCaptureGroup.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
+        }
     }
 
     private void updateEditorButtonsState(EditorState editorState) {
