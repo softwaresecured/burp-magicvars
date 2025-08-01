@@ -6,7 +6,6 @@ import burp_magicvars.event.MagicVarsConfigControllerEvent;
 import burp_magicvars.event.MagicVarsConfigModelEvent;
 import burp_magicvars.model.MagicVarsConfigModel;
 import burp_magicvars.mvc.AbstractView;
-import burp_magicvars.util.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,7 +51,11 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
 
     public MagicVarsConfigView(MagicVarsConfigModel model) {
         super(model);
-        jtblCustomMagicVariables = new JTable(getModel().getCustomVariablesModel());
+        jtblCustomMagicVariables = new JTable(getModel().getCustomVariablesModel()){
+            public boolean isCellEditable(int row, int column) {
+                return column == 1;
+            };
+        };
     }
 
     @Override
@@ -83,6 +86,7 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
 
         attachSelection(jtblCustomMagicVariables,MagicVarsConfigControllerEvent.ROW_SELECTION_UPDATE);
         attachTableModelChangeListener(jtblCustomMagicVariables.getModel(),MagicVarsConfigControllerEvent.VARIABLES_TABLE_MODEL_CHANGED);
+        attachTableEnableToggleListener(jtblCustomMagicVariables,MagicVarsConfigControllerEvent.VARIABLES_TABLE_ENABLED_TOGGLED_CHANGED);
 
         attach(jtxtPathScope, MagicVarsConfigControllerEvent.UPDATE_PATH_SCOPE);
         checkRegex(jtxtPathScope);
@@ -104,6 +108,9 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
             case CONFIG_LOADED:
                 jtxtLeftVariableMarker.setText(getModel().getLeftVariableMarker());
                 jtxtRightVariableMarker.setText(getModel().getRightVariableMarker());
+                break;
+            case CURRENT_VARIABLE_ENABLED_TOGGLE:
+                jchkEnabled.setSelected((boolean)next);
                 break;
             case EDITOR_STATE_CHANGED:
                 updateEditorButtonsState((EditorState)next);
@@ -129,8 +136,8 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
                 jspnReadRegexCaptureGroup.setValue(getModel().getCurrentVariableReadCaptureGroup());
                 jspnWriteRegexCaptureGroup.setValue(getModel().getCurrentVariableWriteCaptureGroup());
 
-                updateInputsState(getModel().getEditorState(),getModel().getCurrentVariableMagicVariableType());
                 updateDynamicVariableInputsState(getModel().getCurrentVariableMagicVariableType());
+                updateInputsState(getModel().getEditorState(),getModel().getCurrentVariableMagicVariableType());
                 break;
 
             case CURRENT_VARIABLE_TYPE_UPDATED:
@@ -157,6 +164,9 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
                 if ( currentIndex >= 0 && jtblCustomMagicVariables.getRowCount() > 0 ) {
                     jtblCustomMagicVariables.getSelectionModel().setSelectionInterval(currentIndex,currentIndex);
                 }
+                if ( getModel().getMagicVariables().isEmpty() ) {
+                    getModel().setEditorState(EditorState.INITIAL);
+                }
                 break;
 
             case VARIABLE_ORDER_UPDATED:
@@ -177,6 +187,7 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
                 else {
                     jtxtUpdateAvailableMessage.setVisible(false);
                 }
+                break;
         }
     }
 
@@ -190,7 +201,6 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
     }
 
     private void updateInputsState(EditorState editorState, MagicVariableType magicVariableType ) {
-
         jtxtName.setEnabled(editorState == EditorState.INITIAL ? false : true);
         jcmbType.setEnabled(editorState == EditorState.INITIAL ? false : true);
         jtxtDescription.setEnabled(editorState == EditorState.INITIAL ? false : true);
@@ -227,10 +237,12 @@ public class MagicVarsConfigView extends AbstractView<MagicVarsConfigControllerE
     }
 
     private void updateDynamicVariableInputsState( MagicVariableType magicVariableType ) {
-        jtxtReadRegex.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
-        jspnReadRegexCaptureGroup.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
-        jtxtWriteRegex.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
-        jspnWriteRegexCaptureGroup.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
+        if ( magicVariableType != null ) {
+            jtxtReadRegex.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
+            jspnReadRegexCaptureGroup.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
+            jtxtWriteRegex.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
+            jspnWriteRegexCaptureGroup.setEnabled(magicVariableType == MagicVariableType.STATIC ? false : true);
+        }
     }
 
     private void updateEditorButtonsState(EditorState editorState) {

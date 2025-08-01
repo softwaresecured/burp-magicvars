@@ -1,6 +1,7 @@
 package burp_magicvars.util;
 
 import burp.api.montoya.collaborator.Collaborator;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import burp_magicvars.MagicVariable;
 import burp_magicvars.enums.MagicVariableType;
 import burp_magicvars.event.MagicVarsReplacementEvent;
@@ -344,6 +345,19 @@ public class MagicVarsReplacer {
         }
         Logger.perf(totalStartTime,"processStaticVariables - full");
         return param;
+    }
+
+    public HttpRequest rawReplaceAll(HttpRequest request, ArrayList<MagicVariable> variables ) {
+        String originalRequest = request.toString();
+        String currentRequest = request.toString();
+
+        currentRequest = processDynamicVariables(variables,currentRequest,new ParameterEncoder());
+        currentRequest = processStaticVariables(variables,currentRequest,new ParameterEncoder());
+
+        if (!currentRequest.equals(originalRequest)) {
+            request = HttpRequest.httpRequest(currentRequest).withService(request.httpService());
+        }
+        return request;
     }
 
     private String emitIfChanged(String variableName, String prev, String next ) {

@@ -138,6 +138,10 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                     getModel().setEditorState(EditorState.INITIAL);
                 }
                 break;
+            case VARIABLES_TABLE_ENABLED_TOGGLED_CHANGED:
+                getModel().setCurrentVariableEnabled(!getModel().isCurrentVariableEnabled());
+                getModel().getVariableById(getModel().getCurrentVariableId()).enabled = getModel().isCurrentVariableEnabled();
+                break;
             case MagicVarsConfigControllerEvent.VARIABLES_TABLE_MODEL_CHANGED:
                 getModel().syncOrder();
                 break;
@@ -271,7 +275,7 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
             Do full body replacement for text/json/xml/formdata or null content-type
          */
         String contentType = request.header("content-type") == null ? "" : request.header("content-type").value();
-        if ( request.header("content-type") == null || contentType.matches("(?i).*(text|xml|json|x-www-form-urlencoded).*")) {
+        if ( request.header("content-type") == null || contentType.matches("(?i).*(text|xml|json|form-urlencoded).*")) {
             if ( request.body().length() > 0 ) {
                 String preProcess = modifiedRequest.bodyToString();
                 // Statics
@@ -291,6 +295,7 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                 }
             }
         }
+
         /*
             Statics - path parameters
          */
@@ -301,6 +306,13 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                         new ParameterEncoder(api, HttpParameterType.URL)
                 )
         );
+
+        /*
+            We try our best to replace with smart encoding by reading content type etc but if there are still
+            unreplaced variables we nuke the site from orbit and just process the entire raw request. There will
+            be no encoding applied by this but at this point we did try our best anyway.
+         */
+        modifiedRequest = magicVarsReplacer.rawReplaceAll(modifiedRequest,getModel().getMagicVariables());
 
         return modifiedRequest;
     }
