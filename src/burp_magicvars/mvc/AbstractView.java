@@ -3,17 +3,16 @@ package burp_magicvars.mvc;
 
 
 import burp_magicvars.event.EventEmitter;
+import burp_magicvars.util.Logger;
 import burp_magicvars.util.RegexValidityDocumentListener;
+import burp_magicvars.view.MagicVarsConfigView;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.beans.PropertyChangeListener;
 import java.util.concurrent.Callable;
 
@@ -81,6 +80,18 @@ public abstract class AbstractView<TEvent extends Enum<TEvent>, TModel extends A
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() ) {
                 emit(event,null,table.getSelectedRow());
+            }
+        });
+    }
+
+    protected void attachTableEnableToggleListener( JTable table, TEvent event ) {
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if ( table.columnAtPoint(e.getPoint()) == 1 ) {
+                    String id = (String)table.getValueAt(table.rowAtPoint(e.getPoint()),0);
+                    emit(event,null,id);
+                }
             }
         });
     }

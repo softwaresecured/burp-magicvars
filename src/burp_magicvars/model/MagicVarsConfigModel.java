@@ -57,7 +57,12 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
     private final DefaultTableModel customVariablesModel;
     public MagicVarsConfigModel() {
         super();
-        this.customVariablesModel = new DefaultTableModel();
+        this.customVariablesModel = new DefaultTableModel() {
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnIndex == 1 ? Boolean.class : String.class;
+            }
+        };
         for (String col : new String[] {
                 "ID",
                 "Enabled",
@@ -472,7 +477,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
 
     /*
             Syncs the order of the jtable to the order property of the magic variable list
-         */
+    */
     public void syncOrder() {
         for ( int i = 0; i < customVariablesModel.getRowCount(); i++ ) {
             String currentRowId = (String) customVariablesModel.getValueAt(i,0);
@@ -558,7 +563,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
             else {
                 customVariablesModel.insertRow(0,new Object[] {
                         magicVariable.id,
-                        magicVariable.enabled ? "true" : "false",
+                        magicVariable.enabled,
                         magicVariable.name,
                         MagicVariableType.getPrettyName(magicVariable.magicVariableType),
                         magicVariable.pathScopeRegex == null ? "" : magicVariable.pathScopeRegex.toString(),
@@ -636,5 +641,4 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         }
         return newName;
     }
-
 }

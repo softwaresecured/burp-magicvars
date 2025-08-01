@@ -138,6 +138,10 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                     getModel().setEditorState(EditorState.INITIAL);
                 }
                 break;
+            case VARIABLES_TABLE_ENABLED_TOGGLED_CHANGED:
+                getModel().setCurrentVariableEnabled(!getModel().isCurrentVariableEnabled());
+                getModel().getVariableById(getModel().getCurrentVariableId()).enabled = getModel().isCurrentVariableEnabled();
+                break;
             case MagicVarsConfigControllerEvent.VARIABLES_TABLE_MODEL_CHANGED:
                 getModel().syncOrder();
                 break;
