@@ -8,6 +8,7 @@ import burp_magicvars.enums.EditorState;
 import burp_magicvars.enums.MagicVariableType;
 import burp_magicvars.config.AbstractConfig;
 import burp_magicvars.event.MagicVarsConfigModelEvent;
+import burp_magicvars.event.MagicVarsReplacementEvent;
 import burp_magicvars.mvc.AbstractModel;
 import burp_magicvars.util.Logger;
 import burp_magicvars.util.RegexUtil;
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -129,7 +131,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         currentVariableDescription = "";
         currentVariableMagicVariableType = null;
         currentVariableInitialValue = "";
-        currentVariablePathScopeRegex = "";
+        currentVariablePathScopeRegex = ".*";
         // Dynamic specific settings
         currentVariableEnabled = false;
         currentVariableReadRegex = "";
@@ -345,6 +347,28 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         if ( currentVariableName.isEmpty() ) {
             emit(MagicVarsConfigModelEvent.CURRENT_VARIABLE_SAVE_ERROR, null, "A variable must have a name");
             return;
+        }
+
+        // The name must be [A-Za-z0-9]+
+        if ( !currentVariableName.matches("(?i)[a-z0-9]+")) {
+            emit(MagicVarsConfigModelEvent.CURRENT_VARIABLE_SAVE_ERROR, null, "A variable name must only contain letters or numbers");
+            return;
+        }
+
+        // If Dynamic there must be regexes
+        if ( currentVariableMagicVariableType.equals(MagicVariableType.DYNAMIC)) {
+            if ( currentVariableReadRegex.length() == 0 || currentVariableWriteRegex.length() == 0 ) {
+                emit(MagicVarsConfigModelEvent.CURRENT_VARIABLE_SAVE_ERROR, null, "A dynamic variable must have a read and write regex");
+                return;
+            }
+        }
+
+        // Must have a path scope regex
+        if (currentVariablePathScopeRegex.isEmpty()) {
+            if ( !RegexUtil.validateRegex(currentVariablePathScopeRegex)) {
+                emit(MagicVarsConfigModelEvent.CURRENT_VARIABLE_SAVE_ERROR, null, "Path scope regex must be set");
+                return;
+            }
         }
 
         // check the regexes
@@ -637,7 +661,7 @@ public class MagicVarsConfigModel extends AbstractModel<MagicVarsConfigModelEven
         String newName = baseName;
         while ( getMagicVariableByName(newName) != null ) {
             i++;
-            newName = String.format("%s_%d", baseName, i);
+            newName = String.format("%s%d", baseName, i);
         }
         return newName;
     }
