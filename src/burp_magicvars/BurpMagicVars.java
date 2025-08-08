@@ -51,11 +51,11 @@ public class BurpMagicVars implements BurpExtension, ExtensionUnloadingHandler {
         }
         api.extension().registerUnloadingHandler(this);
         // Disabled for bappstore
-        /*
-        UpdateChecker updateChecker = new UpdateChecker();
-        updateCheckerThread = new Thread(updateChecker);
-        updateCheckerThread.start();
-        */
+        if ( !api.extension().isBapp() ) {
+            UpdateChecker updateChecker = new UpdateChecker();
+            updateCheckerThread = new Thread(updateChecker);
+            updateCheckerThread.start();
+        }
 
     }
 
