@@ -348,6 +348,7 @@ public class MagicVarsReplacer {
     }
 
     public HttpRequest rawReplaceAll(HttpRequest request, ArrayList<MagicVariable> variables ) {
+        Logger.log("INFO","Running raw replacement");
         String originalRequest = request.toString();
         String currentRequest = request.toString();
 

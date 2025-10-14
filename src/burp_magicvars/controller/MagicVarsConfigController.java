@@ -313,7 +313,6 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
             be no encoding applied by this but at this point we did try our best anyway.
          */
         modifiedRequest = magicVarsReplacer.rawReplaceAll(modifiedRequest,getModel().getMagicVariables());
-
         return modifiedRequest;
     }
 
