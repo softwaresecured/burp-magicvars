@@ -38,7 +38,7 @@ public class ParameterEncoder {
                     encodedValue = api.utilities().urlUtils().encode(value);
                     break;
                 case BODY:
-                    if ( contentType.matches("(?i).*x-www-form-urlencoded.*")) {
+                    if ( contentType != null && contentType.matches("(?i).*x-www-form-urlencoded.*")) {
                         encodedValue = api.utilities().urlUtils().encode(value);
                     }
                     break;

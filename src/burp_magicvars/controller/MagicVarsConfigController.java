@@ -106,10 +106,10 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
                 getModel().setCurrentVariableInitialValue((String)next);
                 break;
             case MagicVarsConfigControllerEvent.UPDATE_READ_CAPTURE_GROUP:
-                getModel().setCurrentVariableReadCaptureGroup(textFieldAsInteger((String)next));
+                getModel().setCurrentVariableReadCaptureGroup((Integer)next);
                 break;
             case MagicVarsConfigControllerEvent.UPDATE_WRITE_CAPTURE_GROUP:
-                getModel().setCurrentVariableWriteCaptureGroup(textFieldAsInteger((String)next));
+                getModel().setCurrentVariableWriteCaptureGroup((Integer)next);
                 break;
             case MagicVarsConfigControllerEvent.UPDATE_PATH_SCOPE:
                 getModel().setCurrentVariablePathScopeRegex((String)next);
@@ -313,7 +313,6 @@ public class MagicVarsConfigController extends AbstractController<MagicVarsConfi
             be no encoding applied by this but at this point we did try our best anyway.
          */
         modifiedRequest = magicVarsReplacer.rawReplaceAll(modifiedRequest,getModel().getMagicVariables());
-
         return modifiedRequest;
     }
 

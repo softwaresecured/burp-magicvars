@@ -161,7 +161,9 @@ public abstract class AbstractView<TEvent extends Enum<TEvent>, TModel extends A
     }
 
     protected void attach(JSpinner field, TEvent event) {
-        field.addChangeListener(e -> emit(event, null, (int)field.getValue()));
+        field.addChangeListener(e -> {
+            emit(event, null, (int)field.getValue());
+        });
     }
 
     protected void attachKey(JTextField field, int key, TEvent event) {
