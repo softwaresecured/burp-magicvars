@@ -47,6 +47,14 @@ public class ReplacementTests {
     }
 
     @Test
+    @DisplayName("Test random ip")
+    public void testRandomIp() {
+        // Not sure how best to test I guess if there is more than 4 words
+        String test = magicVarsReplacer.getRandIpV4();
+        assertTrue(test.matches("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b"));
+    }
+
+    @Test
     @DisplayName("Test lorem ipsum sentence")
     public void testLoremIpsumSentence() {
         // Not sure how best to test I guess if there is more than 4 words

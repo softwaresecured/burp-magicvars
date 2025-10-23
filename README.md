@@ -33,7 +33,8 @@ a collaborator address.
 - `__XXE__` - An XXE payload ( with `OOB` )
 - `__HTMLOOB__` - An HTML injection test ( with `OOB` )
 - `__JSOOB__` - A JavaScript injection test ( with `OOB` )
-
+- `__RANDIPV4__` - A random IP address ( use carefully )
+- 
 ### Example usage:
 - Use a dynamic variable to read a value from a response with `sessionid='([^']+)'` and write it to a request 
 with `/session/([a-f0-9]+)/profile`

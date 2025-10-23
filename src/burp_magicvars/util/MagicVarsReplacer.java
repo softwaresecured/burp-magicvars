@@ -110,6 +110,18 @@ public class MagicVarsReplacer {
         return String.format("%d", rint);
     }
 
+    public String getRandIpV4() {
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+        for ( int i = 0; i < 4; i++ ) {
+            if ( i > 0 ) {
+                sb.append(".");
+            }
+            sb.append(String.format("%s", random.nextInt(255)));
+        }
+        return sb.toString();
+    }
+
     public String getNeRint() {
         Random random = new Random();
         int rint = 1000 + random.nextInt(8999);
@@ -270,6 +282,9 @@ public class MagicVarsReplacer {
             startTime = System.currentTimeMillis();
 
             // Process builtin
+            if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("RANDIPV4")))) {
+                param = emitIfChanged(prepareVariableName("RANDIPV4"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("RANDIPV4")), parameterEncoder.encodeParameter(getRandIpV4())));
+            }
             if ( RegexUtil.matches(param,"(?i)%s".formatted(prepareVariableName("RINT")))) {
                 param = emitIfChanged(prepareVariableName("RINT"), param, param.replaceAll("(?i)%s".formatted(prepareVariableName("RINT")), parameterEncoder.encodeParameter(getRint())));
             }
